@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -63,6 +64,19 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().toString())
                 .status(HttpStatus.CONFLICT.toString())
                 .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(exception.getMessage())
+                .build();
+        log.error("{}", errorResponse.getMessage());
+        return errorResponse;
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbiddenException(ForbiddenException exception) {
+        final ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now().toString())
+                .status(HttpStatus.FORBIDDEN.toString())
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
                 .message(exception.getMessage())
                 .build();
         log.error("{}", errorResponse.getMessage());

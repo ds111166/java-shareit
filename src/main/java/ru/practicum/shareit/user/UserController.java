@@ -29,7 +29,7 @@ public class UserController {
     public List<UserDto> getUsers() {
         log.info("Запрос на получение списка всех пользователей");
         final List<UserDto> users = userService.getUsers();
-        log.info("Отправлен список из {} пользователей", users.size());
+        log.info("Количество всех пользователей равно: {}", users.size());
         return users;
     }
 
@@ -38,7 +38,7 @@ public class UserController {
     public UserDto getUserById(@PathVariable @NotNull Long userId) {
         log.info("Запрос на получение пользователя с id: {}", userId);
         final UserDto userById = userService.getUserById(userId);
-        log.info("Отправлен - {}", userById);
+        log.info("Отправлен: \"{}\"", userById);
         return userById;
     }
 
@@ -46,19 +46,20 @@ public class UserController {
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@Valid @RequestBody UserDto newUser) {
-        log.info("Запрос на создание - {}", newUser);
+        log.info("Запрос на создание: \"{}\"", newUser);
         final UserDto user = userService.createUser(newUser);
-        log.info("Создан - {}", user);
+        log.info("Создан: \"{}\"", user);
         return user;
     }
 
-    @Validated({Marker.OnUpdate.class})
     @PatchMapping("/{userId}")
+    @Validated({Marker.OnUpdate.class})
     @ResponseStatus(HttpStatus.OK)
-    public UserDto updateUser(@PathVariable @NotNull Long userId, @Valid @RequestBody UserDto updatedUser) {
-        log.info("Запрос на обновление - {}", updatedUser);
+    public UserDto updateUser(@PathVariable @NotNull Long userId,
+                              @Valid @RequestBody UserDto updatedUser) {
+        log.info("Запрос на обновление: \"{}\"", updatedUser);
         final UserDto user = userService.updateUser(userId, updatedUser);
-        log.info("Обновлён - {}", user);
+        log.info("Обновлён: \"{}\"", user);
         return user;
     }
 
@@ -68,4 +69,5 @@ public class UserController {
         log.info("Запрос на удаление пользователя с id: {}", userId);
         userService.delete(userId);
     }
+
 }

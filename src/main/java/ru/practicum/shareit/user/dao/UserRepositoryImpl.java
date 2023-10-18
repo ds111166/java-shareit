@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.item.dao.ItemRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,12 +14,14 @@ import java.util.stream.Collectors;
 public class UserRepositoryImpl implements UserRepository {
     private long generatorId = 0L;
     private final Map<Long, User> users;
-    private final ItemRepository itemRepository;
 
+
+    @Override
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
 
+    @Override
     public User getUserById(Long userId) {
         if (!users.containsKey(userId)) {
             throw new NotFoundException(String.format("Пользователя с id = %s не существует", userId));
@@ -28,29 +29,31 @@ public class UserRepositoryImpl implements UserRepository {
         return users.get(userId);
     }
 
+    @Override
     public User createUser(User newUser) {
         CheckingUserEmail(newUser.getEmail());
-        final long id = ++generatorId;
-        newUser.setId(id);
-        users.put(newUser.getId(), newUser);
+        final long userId = ++generatorId;
+        newUser.setId(userId);
+        users.put(userId, newUser);
         return newUser;
     }
 
+    @Override
     public User updateUser(Long userId, User userDate) {
-        if(!users.containsKey(userId)) {
+        if (!users.containsKey(userId)) {
             throw new NotFoundException(String.format("Пользователя с id = %s не существует", userId));
         }
         final User updatedUser = users.get(userId);
         final Long userDateId = userDate.getId();
-        if(userDateId != null && !Objects.equals(updatedUser.getId(), userDateId)){
-            throw new ConflictException("Попытка изменить идентификатор у существующего пользователя");
+        if (userDateId != null && !Objects.equals(updatedUser.getId(), userDateId)) {
+            throw new ConflictException("Изменять идентификатор у пользователя запрещено");
         }
         final String userDateName = userDate.getName();
-        if(userDateName != null) {
+        if (userDateName != null) {
             updatedUser.setName(userDateName);
         }
         final String userDateEmail = userDate.getEmail();
-        if(userDateEmail != null) {
+        if (userDateEmail != null && !Objects.equals(updatedUser.getEmail(), userDateEmail)) {
             CheckingUserEmail(userDateEmail);
             updatedUser.setEmail(userDateEmail);
         }
@@ -60,17 +63,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteUser(Long userId) {
-        if (users.containsKey(userId)) {
-            itemRepository.remoteItemsByOwnerId(userId);
-            users.remove(userId);
-        } else {
-            throw new NotFoundException(String.format("Пользователя с id = %s не существует", userId));
-        }
+        users.remove(userId);
     }
 
     private void CheckingUserEmail(String userEmail) {
         final Set<String> emails = users.values().stream().map(User::getEmail).collect(Collectors.toSet());
-        if(emails.contains(userEmail)) {
+        if (emails.contains(userEmail)) {
             throw new ConflictException(String.format("Пользователь с email = %s уже существует", userEmail));
         }
     }
