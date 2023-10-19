@@ -18,8 +18,9 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .owner(userMapper.toUserDto(item.getOwner()))
-                .itemRequestId(item.getItemRequestId()).build();
+                .owner(null)
+                .itemRequestId(item.getItemRequestId())
+                .build();
     }
 
     public Item toItem(ItemDto itemDto) {

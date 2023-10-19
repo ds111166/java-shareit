@@ -41,7 +41,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(Long ownerId, Long itemId, ItemDto itemData) {
-        final UserDto owner = userService.getUserById(ownerId);
+        userService.getUserById(ownerId);
         return itemMapper.toItemDto(itemRepository.updateItem(ownerId, itemId, itemData));
     }
 

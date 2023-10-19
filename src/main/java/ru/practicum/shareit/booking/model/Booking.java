@@ -1,7 +1,8 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.model;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.booking.StatusBooking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -19,5 +20,4 @@ public class Booking {
     private Item item;            // вещь, которую пользователь бронирует
     private User booker;          // пользователь, который осуществляет бронирование
     private StatusBooking status; // статус бронирования
-
 }
