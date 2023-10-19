@@ -31,7 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User createUser(User newUser) {
-        CheckingUserEmail(newUser.getEmail());
+        checkingUserEmail(newUser.getEmail());
         final long userId = ++generatorId;
         newUser.setId(userId);
         users.put(userId, newUser);
@@ -54,7 +54,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
         final String userDateEmail = userDate.getEmail();
         if (userDateEmail != null && !Objects.equals(updatedUser.getEmail(), userDateEmail)) {
-            CheckingUserEmail(userDateEmail);
+            checkingUserEmail(userDateEmail);
             updatedUser.setEmail(userDateEmail);
         }
         users.put(userId, updatedUser);
@@ -66,10 +66,10 @@ public class UserRepositoryImpl implements UserRepository {
         users.remove(userId);
     }
 
-    private void CheckingUserEmail(String userEmail) {
+    private void checkingUserEmail(String userEmail) {
         final Set<String> emails = users.values().stream().map(User::getEmail).collect(Collectors.toSet());
         if (emails.contains(userEmail)) {
-            throw new ConflictException(String.format("Пользователь с email = %s уже существует", userEmail));
+            throw new ConflictException(String.format("Пользователь с email: \"%s\" уже существует", userEmail));
         }
     }
 
