@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -18,7 +19,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final UserService userService;
 
-
     @Override
     public List<ItemDto> getOwnerItems(Long ownerId) {
         return itemRepository.getOwnerItems(ownerId)
@@ -29,20 +29,22 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(Long itemId) {
-        return itemMapper.toItemDto(itemRepository.getItemById(itemId));
+        final Item itemById = itemRepository.getItemById(itemId);
+        return itemMapper.toItemDto(itemById);
     }
 
     @Override
     public ItemDto createItem(Long ownerId, ItemDto newItemDto) {
         final UserDto owner = userService.getUserById(ownerId);
-        newItemDto.setOwner(owner);
-        return itemMapper.toItemDto(itemRepository.createItem(itemMapper.toItem(newItemDto)));
+        final Item createdItem = itemRepository.createItem(itemMapper.toItem(newItemDto, owner));
+        return itemMapper.toItemDto(createdItem);
     }
 
     @Override
     public ItemDto updateItem(Long ownerId, Long itemId, ItemDto itemData) {
         userService.getUserById(ownerId);
-        return itemMapper.toItemDto(itemRepository.updateItem(ownerId, itemId, itemData));
+        final Item updatedItem = itemRepository.updateItem(ownerId, itemId, itemData);
+        return itemMapper.toItemDto(updatedItem);
     }
 
     @Override

@@ -12,9 +12,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Slf4j
 @Validated
 @RestController
@@ -65,9 +62,10 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable @NotNull Long userId) {
+    public void deleteUser(@PathVariable @NotNull Long userId) {
         log.info("Запрос на удаление пользователя с id: {}", userId);
-        userService.delete(userId);
+        userService.deleteUser(userId);
+        log.info("Пользователь с id: {} удален", userId);
     }
 
 }

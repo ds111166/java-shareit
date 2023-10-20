@@ -52,7 +52,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item updateItem(Long ownerId, Long itemId, ItemDto itemData) {
         if (!items.containsKey(itemId)) {
-            throw new NotFoundException(String.format("Вещь с id = %s не найдена", itemId));
+            throw new NotFoundException(String.format("Вещь с id = %s не существует", itemId));
         }
         final Item updatedItem = items.get(itemId);
         if (!Objects.equals(updatedItem.getOwner().getId(), ownerId)) {

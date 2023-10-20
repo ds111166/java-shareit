@@ -7,14 +7,13 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private long generatorId = 0L;
     private final Map<Long, User> users;
-
+    private final Set<String> emailUniqSet;
 
     @Override
     public List<User> getUsers() {
@@ -31,10 +30,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User createUser(User newUser) {
-        checkingUserEmail(newUser.getEmail());
+        final String userEmail = newUser.getEmail();
+        checkingUserEmail(userEmail);
         final long userId = ++generatorId;
         newUser.setId(userId);
         users.put(userId, newUser);
+        emailUniqSet.add(userEmail);
         return newUser;
     }
 
@@ -53,24 +54,30 @@ public class UserRepositoryImpl implements UserRepository {
             updatedUser.setName(userDateName);
         }
         final String userDateEmail = userDate.getEmail();
-        if (userDateEmail != null && !Objects.equals(updatedUser.getEmail(), userDateEmail)) {
+        final String userEmail = updatedUser.getEmail();
+        if (userDateEmail != null && !Objects.equals(userEmail, userDateEmail)) {
             checkingUserEmail(userDateEmail);
             updatedUser.setEmail(userDateEmail);
+            emailUniqSet.remove(userEmail);
         }
         users.put(userId, updatedUser);
+        emailUniqSet.add(userDateEmail);
         return updatedUser;
     }
 
     @Override
     public void deleteUser(Long userId) {
-        users.remove(userId);
-    }
-
-    private void checkingUserEmail(String userEmail) {
-        final Set<String> emails = users.values().stream().map(User::getEmail).collect(Collectors.toSet());
-        if (emails.contains(userEmail)) {
-            throw new ConflictException(String.format("Пользователь с email: \"%s\" уже существует", userEmail));
+        if (users.containsKey(userId)) {
+            final User user = users.get(userId);
+            final String userEmail = user.getEmail();
+            users.remove(userId);
+            emailUniqSet.remove(userEmail);
         }
     }
 
+    private void checkingUserEmail(String userEmail) {
+        if (emailUniqSet.contains(userEmail)) {
+            throw new ConflictException(String.format("Пользователь с email: \"%s\" уже существует", userEmail));
+        }
+    }
 }

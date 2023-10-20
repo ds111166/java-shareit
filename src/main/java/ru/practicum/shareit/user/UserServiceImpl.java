@@ -25,7 +25,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto getUserById(Long userId) {
-        return userMapper.toUserDto(userRepository.getUserById(userId));
+        final User userById = userRepository.getUserById(userId);
+        return userMapper.toUserDto(userById);
     }
 
     public UserDto createUser(UserDto newUser) {
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(updatedUser);
     }
 
-    public void delete(Long userId) {
+    public void deleteUser(Long userId) {
         userRepository.deleteUser(userId);
         itemRepository.remoteItemsByOwnerId(userId);
     }

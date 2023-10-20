@@ -12,9 +12,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Slf4j
 @Validated
 @RestController
@@ -61,7 +58,7 @@ public class ItemController {
                               @Valid @RequestBody ItemDto itemData) {
         log.info("Запрос на обновление: {}, id вещи: {}, id владельца: {}", itemData, itemId, ownerId);
         final ItemDto updatedItem = itemService.updateItem(ownerId, itemId, itemData);
-        log.info("Обновлёна: {}", updatedItem);
+        log.info("Обновлена: {}", updatedItem);
         return updatedItem;
     }
 
