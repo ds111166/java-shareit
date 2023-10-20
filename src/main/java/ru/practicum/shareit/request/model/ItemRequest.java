@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request.dto;
+package ru.practicum.shareit.request.model;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class ItemRequestDto {
+public class ItemRequest {
     private Long id;                  // уникальный идентификатор запроса
     private String description;       // текст запроса, содержащий описание требуемой вещи
     private User requestor;           // пользователь, создавший запрос
