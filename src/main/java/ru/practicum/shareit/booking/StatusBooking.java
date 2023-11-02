@@ -1,10 +1,13 @@
 package ru.practicum.shareit.booking;
 
+import lombok.Getter;
+
+@Getter
 public enum StatusBooking {
-    APPROVED(1),
-    CANCELED(2),
+    WAITING(1),
+    APPROVED(2),
     REJECTED(3),
-    WAITING(4);
+    CANCELED(4);
     private final int id;
 
     StatusBooking(int id) {
@@ -14,18 +17,15 @@ public enum StatusBooking {
     public static StatusBooking getStatus(int id) {
         switch (id) {
             case 1:
-                return APPROVED;
+                return WAITING;
             case 2:
-                return CANCELED;
+                return APPROVED;
             case 3:
                 return REJECTED;
             case 4:
-                return WAITING;
+                return CANCELED;
         }
         return null;
     }
 
-    public int getId() {
-        return id;
-    }
 }

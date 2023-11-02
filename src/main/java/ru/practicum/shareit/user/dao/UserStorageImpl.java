@@ -10,7 +10,7 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepository {
+public class UserStorageImpl implements UserStorage {
     private long generatorId = 0L;
     private final Map<Long, User> users;
     private final Set<String> emailUniqSet;

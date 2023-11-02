@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class ItemRepositoryImpl implements ItemRepository {
+public class ItemStorageImpl implements ItemStorage {
     private long generatorId = 0L;
     private final Map<Long, Item> items;
 
