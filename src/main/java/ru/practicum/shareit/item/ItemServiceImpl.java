@@ -50,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
             final Item createdItem = itemRepository.save(itemMapper.toItem(newItemDto, owner));
             return itemMapper.toItemDto(createdItem);
         } catch (DataIntegrityViolationException ex) {
-            throw new ConflictException(ex.getCause());
+            throw new ConflictException(ex.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class ItemServiceImpl implements ItemService {
             final Item updatedItem = itemRepository.save(updateItem);
             return itemMapper.toItemDto(updatedItem);
         } catch (DataIntegrityViolationException ex) {
-            throw new ConflictException(ex.getCause());
+            throw new ConflictException(ex.getMessage());
         }
     }
 
