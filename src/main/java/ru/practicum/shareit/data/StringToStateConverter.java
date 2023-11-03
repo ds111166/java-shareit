@@ -1,6 +1,7 @@
 package ru.practicum.shareit.data;
 
 import org.springframework.core.convert.converter.Converter;
+
 import javax.validation.ValidationException;
 
 public class StringToStateConverter implements Converter<String, State> {

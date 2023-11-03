@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.BookingService;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -12,6 +14,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,14 +27,25 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
     private final UserService userService;
+    private final BookingService bookingService;
 
     @Override
     @Transactional
     public List<ItemDto> getOwnerItems(Long ownerId) {
-        return itemRepository.findByOwnerId(ownerId)
-                .stream()
-                .map(itemMapper::toItemDto)
-                .collect(Collectors.toList());
+        List<Item> items = itemRepository.findByOwnerId(ownerId);
+        List<ItemDto> itemsDro = new ArrayList<>();
+        final LocalDateTime nowDateTime = LocalDateTime.now();
+        for (Item item : items) {
+            Long itemId = item.getId();
+            BookingDto bookingDtoLast = bookingService
+                    .findFirstByItem_IdAndEndAfterOrderByStartDesc(itemId, nowDateTime);
+            BookingDto bookingDtoNext = bookingService
+                    .findFirstByItem_IdAndStartAfterOrderByEndAsc(itemId, nowDateTime);
+            ItemDto itemDto = itemMapper.toItemDto(item, bookingDtoLast, bookingDtoNext);
+            itemsDro.add(itemDto);
+        }
+        return itemsDro;
+
     }
 
     @Override
