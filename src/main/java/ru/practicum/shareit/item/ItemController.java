@@ -70,4 +70,5 @@ public class ItemController {
         log.info("Количество найденных вещей равно: {}", items.size());
         return items;
     }
+
 }
