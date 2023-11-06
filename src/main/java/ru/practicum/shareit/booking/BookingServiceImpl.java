@@ -33,11 +33,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto createBooking(BookingDto newBooking) {
-       userService.getUserById(newBooking.getBooker().getId());
+        userService.getUserById(newBooking.getBooker().getId());
         final Long itemId = newBooking.getItem().getId();
         final ItemDto item = itemService.getItemById(itemId);
         if (!item.getAvailable()) {
-            throw new ValidationException("Вещь с id: {} " + itemId + " не доступна для бронирования");
+            throw new ValidationException("Вещь с id: " + itemId + " не доступна для бронирования");
         }
         try {
             Booking createdBooking = bookingRepository.save(bookingMapper.toBooking(newBooking,
@@ -56,16 +56,16 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Бронирования с id = " + bookingId + " не существует"));
         ItemDto item = itemService.getItemById(booking.getItem().getId());
         if (!ownerItemId.equals(item.getOwner().getId())) {
-            throw new ConflictException("Пользователь с id: {}" + ownerItemId
-                    + "не является владельцем вещи бронирования с id: {}" + bookingId);
+            throw new ConflictException("Пользователь с id: " + ownerItemId
+                    + " не является владельцем вещи, которая бронируется с id: " + bookingId);
         }
         if (booking.getEnd().isAfter(LocalDateTime.now())) {
-            throw new ValidationException("Время бронирования уже истекло: {}" + booking.getEnd());
+            throw new ValidationException("Время бронирования уже истекло: " + booking.getEnd());
         }
-        if (booking.getStatus().equals(StatusBooking.CANCELED)) {
-            throw new ValidationException("Бронирование отменено, статус: {}" + booking.getStatus());
+        if (booking.getStatusId().equals(StatusBooking.CANCELED)) {
+            throw new ValidationException("Бронирование отменено, статус: " + booking.getStatusId());
         }
-        booking.setStatus((approved) ? StatusBooking.APPROVED : StatusBooking.REJECTED);
+        booking.setStatusId((approved) ? StatusBooking.APPROVED : StatusBooking.REJECTED);
         Booking savedBooking = bookingRepository.save(booking);
         return bookingMapper.toBookingDto(savedBooking);
     }
@@ -81,8 +81,8 @@ public class BookingServiceImpl implements BookingService {
         ItemDto item = itemService.getItemById(booking.getItem().getId());
         boolean isOwnerItem = userId.equals(item.getOwner().getId());
         if (!isBooker && !isOwnerItem) {
-            throw new ConflictException("Пользователь с id: {}" + userId
-                    + "не является ни владельцем вещи ни автором бронирования с id: {}" + bookingId);
+            throw new ConflictException("Пользователь с id: " + userId
+                    + " не является ни владельцем вещи ни автором бронирования с id: " + bookingId);
         }
         return bookingMapper.toBookingDto(booking);
     }
@@ -99,7 +99,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByBookerId(bookerId, sorting);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByBookerIdAndStartNotAfterAndEndNotBefore(bookerId,
+                bookings = bookingRepository.findByBookerIdAndStartGreaterThanEqualAndEndLessThan(bookerId,
                         nowDateTime, nowDateTime, sorting);
                 break;
             case PAST:
@@ -109,15 +109,15 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByBookerIdAndStartAfter(bookerId, nowDateTime, sorting);
                 break;
             case WAITING:
-                bookings = bookingRepository.findByBookerIdAndStatus(bookerId,
+                bookings = bookingRepository.findByBookerIdAndStatusId(bookerId,
                         StatusBooking.WAITING, sorting);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByBookerIdAndStatus(bookerId,
+                bookings = bookingRepository.findByBookerIdAndStatusId(bookerId,
                         StatusBooking.REJECTED, sorting);
                 break;
             default:
-                throw new ValidationException("Задан не верный тип состояния бронирования: {}" + state);
+                throw new ValidationException("Задан не верный тип состояния бронирования: " + state);
         }
         return bookings.stream()
                 .map(bookingMapper::toBookingDto)
@@ -136,7 +136,9 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByItem_Owner_Id(ownerItemId, sorting);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByItem_Owner_IdAndStartNotAfterAndEndNotBefore(ownerItemId,
+                /*bookings = bookingRepository.findByItem_Owner_IdAndStartNotAfterAndEndNotBefore(ownerItemId,
+                        nowDateTime, nowDateTime, sorting);*/
+                bookings = bookingRepository.findByItem_Owner_IdAndStartGreaterThanEqualAndEndLessThan(ownerItemId,
                         nowDateTime, nowDateTime, sorting);
                 break;
             case PAST:
@@ -146,15 +148,15 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByItem_Owner_IdAndStartAfter(ownerItemId, nowDateTime, sorting);
                 break;
             case WAITING:
-                bookings = bookingRepository.findByItem_Owner_IdAndStatus(ownerItemId,
+                bookings = bookingRepository.findByItem_Owner_IdAndStatusId(ownerItemId,
                         StatusBooking.WAITING, sorting);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByItem_Owner_IdAndStatus(ownerItemId,
+                bookings = bookingRepository.findByItem_Owner_IdAndStatusId(ownerItemId,
                         StatusBooking.REJECTED, sorting);
                 break;
             default:
-                throw new ValidationException("Задан не верный тип состояния бронирования: {}" + state);
+                throw new ValidationException("Задан не верный тип состояния бронирования: " + state);
         }
         return bookings.stream()
                 .map(bookingMapper::toBookingDto)
@@ -174,4 +176,5 @@ public class BookingServiceImpl implements BookingService {
         Booking bookingNext = bookingRepository.findFirstByItem_IdAndStartAfterOrderByEndAsc(itemId, nowDateTime);
         return bookingMapper.toBookingDto(bookingNext);
     }
+
 }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.data.State;
 
@@ -20,5 +21,4 @@ public interface BookingService {
     BookingDto findFirstByItem_IdAndEndAfterOrderByStartDesc(Long itemId, LocalDateTime nowDateTime);
 
     BookingDto findFirstByItem_IdAndStartAfterOrderByEndAsc(Long itemId, LocalDateTime nowDateTime);
-
 }

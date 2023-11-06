@@ -18,9 +18,9 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                 // уникальный идентификатор вещи
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String name;             // краткое название
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024)
     private String description;      // развёрнутое описание
     @Column(name = "is_available", nullable = false)
     private Boolean available;       // статус о том, доступна или нет вещь для аренды

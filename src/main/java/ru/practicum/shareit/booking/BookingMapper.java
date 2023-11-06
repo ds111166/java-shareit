@@ -15,33 +15,38 @@ public class BookingMapper {
     private final ItemMapper itemMapper;
 
     public BookingDto toBookingDto(Booking booking) {
-        return BookingDto.builder()
+        return (booking == null) ? null : BookingDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .item(itemMapper.toItemDto(booking.getItem()))
                 .booker(userMapper.toUserDto(booking.getBooker()))
-                .status(booking.getStatus()).build();
+                .statusId(booking.getStatusId())
+                //.status(booking.getStatus())
+                .build();
 
     }
 
     public Booking toBooking(BookingDto bookingDto) {
-        return Booking.builder()
+        return (bookingDto == null) ? null : Booking.builder()
                 .id(bookingDto.getId())
                 .start(bookingDto.getStart())
                 .end(bookingDto.getEnd())
                 .item(itemMapper.toItem(bookingDto.getItem()))
                 .booker(userMapper.toUser(bookingDto.getBooker()))
-                .status(bookingDto.getStatus()).build();
+                .statusId(bookingDto.getStatusId())
+                //.status(booking.getStatus())
+                .build();
     }
 
-    public Booking toBooking(BookingDto bookingDto, StatusBooking statusBooking) {
-        return Booking.builder()
+    public Booking toBooking(BookingDto bookingDto, StatusBooking statusId) {
+        return (bookingDto == null) ? null : Booking.builder()
                 .id(bookingDto.getId())
                 .start(bookingDto.getStart())
                 .end(bookingDto.getEnd())
                 .item(itemMapper.toItem(bookingDto.getItem()))
                 .booker(userMapper.toUser(bookingDto.getBooker()))
-                .status(statusBooking).build();
+                .statusId(statusId)
+                .build();
     }
 }

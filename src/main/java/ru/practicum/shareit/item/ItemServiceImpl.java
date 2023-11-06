@@ -4,8 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.BookingService;
+import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.comment.CommentMapper;
+import ru.practicum.shareit.comment.CommentRepository;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.data.StatusBooking;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -14,6 +21,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +35,10 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
     private final UserService userService;
-    private final BookingService bookingService;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
+    private final BookingMapper bookingMapper;
 
     @Override
     @Transactional
@@ -37,11 +48,14 @@ public class ItemServiceImpl implements ItemService {
         final LocalDateTime nowDateTime = LocalDateTime.now();
         for (Item item : items) {
             Long itemId = item.getId();
-            BookingDto bookingDtoLast = bookingService
+            final Booking bookingLast = bookingRepository
                     .findFirstByItem_IdAndEndAfterOrderByStartDesc(itemId, nowDateTime);
-            BookingDto bookingDtoNext = bookingService
+            final BookingDto bookingDtoLast = bookingMapper.toBookingDto(bookingLast);
+            final Booking bookingNext = bookingRepository
                     .findFirstByItem_IdAndStartAfterOrderByEndAsc(itemId, nowDateTime);
-            ItemDto itemDto = itemMapper.toItemDto(item, bookingDtoLast, bookingDtoNext);
+            final BookingDto bookingDtoNext = bookingMapper.toBookingDto(bookingNext);
+            List<Comment> comments = commentRepository.findAllByItemId(itemId);
+            ItemDto itemDto = itemMapper.toItemDto(item, bookingDtoLast, bookingDtoNext, comments);
             itemsDro.add(itemDto);
         }
         return itemsDro;
@@ -53,7 +67,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto getItemById(Long itemId) {
         final Item itemById = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещи с id = " + itemId + " не существует"));
-        return itemMapper.toItemDto(itemById);
+        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+        return itemMapper.toItemDto(itemById, null, null, comments);
     }
 
     @Override
@@ -109,5 +124,18 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public CommentDto createComment(Long authorId, Long itemId, CommentDto newComment) {
+        final UserDto author = userService.getUserById(authorId);
+        final ItemDto item = getItemById(itemId);
+        if (bookingRepository.existsBookingByBookerIdAndItemIdAndStartBeforeAndStatusId(authorId, itemId,
+                LocalDateTime.now(), StatusBooking.APPROVED)) {
+            throw new ValidationException("Пользователь с id: " + authorId + "не пользовался вещью с id: " + itemId);
+        }
+        final Comment comment = commentRepository.save(commentMapper.toComment(newComment, author, item));
+        return commentMapper.toCommentDto(comment);
     }
 }

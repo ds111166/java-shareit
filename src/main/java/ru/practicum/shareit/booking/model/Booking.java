@@ -31,7 +31,6 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "booker_id", nullable = false)
     private User booker;          // пользователь, который осуществляет бронирование
-    @Enumerated
-    @JoinColumn(name = "status_id", nullable = false)
-    private StatusBooking status; // статус бронирования
+    @Enumerated(EnumType.ORDINAL)
+    private StatusBooking statusId; // статус бронирования
 }
