@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.dto.BookingData;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.data.State;
 import ru.practicum.shareit.validation.Marker;
@@ -25,9 +26,10 @@ public class BookingController {
     @PostMapping
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingDto createBooking(@Valid @RequestBody BookingDto newBooking) {
-        log.info("Запрос на создание: \"{}\"", newBooking);
-        final BookingDto booking = bookingService.createBooking(newBooking);
+    public BookingDto createBooking(@RequestHeader("X-Sharer-User-Id") Long bookerId,
+                                    @Valid @RequestBody BookingData newBookingData) {
+        log.info("Запрос на создание: \"{}\" от пользователя с id: {}", newBookingData, bookerId);
+        final BookingDto booking = bookingService.createBooking(bookerId, newBookingData);
         log.info("Создан: \"{}\"", booking);
         return booking;
     }

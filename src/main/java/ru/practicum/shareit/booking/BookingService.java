@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dto.BookingData;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.data.State;
 
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingService {
-    BookingDto createBooking(BookingDto newBooking);
+    BookingDto createBooking(Long bookerId, BookingData newBookingData);
 
     BookingDto approvalBooking(Long ownerItemId, Long bookingId, Boolean approved);
 

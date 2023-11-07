@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dto.BookingData;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.data.State;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.ValidationException;
@@ -32,16 +34,16 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto createBooking(BookingDto newBooking) {
-        userService.getUserById(newBooking.getBooker().getId());
-        final Long itemId = newBooking.getItem().getId();
+    public BookingDto createBooking(Long bookerId, BookingData newBookingData) {
+        UserDto booker = userService.getUserById(bookerId);
+        final Long itemId = newBookingData.getItemId();
         final ItemDto item = itemService.getItemById(itemId);
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь с id: " + itemId + " не доступна для бронирования");
         }
         try {
-            Booking createdBooking = bookingRepository.save(bookingMapper.toBooking(newBooking,
-                    StatusBooking.WAITING));
+            Booking booking = bookingMapper.toBooking(newBookingData, item, booker, StatusBooking.WAITING);
+            Booking createdBooking = bookingRepository.save(booking);
             return bookingMapper.toBookingDto(createdBooking);
         } catch (DataIntegrityViolationException ex) {
             throw new ConflictException(ex.getMessage());
