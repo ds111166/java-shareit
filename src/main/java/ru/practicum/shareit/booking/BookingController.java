@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingData;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.data.State;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
@@ -63,7 +62,7 @@ public class BookingController {
     public List<BookingDto> getBookings(@RequestHeader("X-Sharer-User-Id") Long bookerId,
                                         @RequestParam(value = "state",
                                                 defaultValue = "ALL",
-                                                required = false) State state) {
+                                                required = false) String state) {
         log.info("Запрос на получение списка бронирований в состоянии: \"{}\" пользователя с id: {}",
                 state, bookerId);
         List<BookingDto> bookings = bookingService.getBookings(bookerId, state);
@@ -77,7 +76,7 @@ public class BookingController {
     public List<BookingDto> getBookingsByOwnerItemId(@RequestHeader("X-Sharer-User-Id") Long ownerItemId,
                                                      @RequestParam(value = "state",
                                                              defaultValue = "ALL",
-                                                             required = false) State state) {
+                                                             required = false) String state) {
         log.info("Запрос на получение списка бронирований в состоянии: \"{}\" вещей владельца с id: {}",
                 state, ownerItemId);
         List<BookingDto> bookings = bookingService.getBookingsByOwnerItemId(ownerItemId, state);

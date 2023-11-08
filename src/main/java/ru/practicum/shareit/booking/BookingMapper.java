@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.dto.BookingBriefDto;
 import ru.practicum.shareit.booking.dto.BookingData;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -24,10 +25,27 @@ public class BookingMapper {
                 .end(booking.getEnd())
                 .item(itemMapper.toItemDto(booking.getItem()))
                 .booker(userMapper.toUserDto(booking.getBooker()))
-                .statusId(booking.getStatusId())
+                .status(booking.getStatusId())
                 //.status(booking.getStatus())
                 .build();
 
+    }
+
+    /*public BookingBriefDto toBookingBriefDto(Booking booking) {
+        return (booking == null) ? null : BookingBriefDto.builder()
+                .id(booking.getId())
+                .bookerId(booking.getBooker().getId())
+                .startTime(booking.getStart())
+                .endTime(booking.getEnd())
+                .build();
+    }*/
+    public BookingBriefDto toBookingBriefDto(BookingDto bookingDto) {
+        return (bookingDto == null) ? null : BookingBriefDto.builder()
+                .id(bookingDto.getId())
+                .bookerId(bookingDto.getBooker().getId())
+                .startTime(bookingDto.getStart())
+                .endTime(bookingDto.getEnd())
+                .build();
     }
 
     public Booking toBooking(BookingDto bookingDto) {
@@ -37,7 +55,7 @@ public class BookingMapper {
                 .end(bookingDto.getEnd())
                 .item(itemMapper.toItem(bookingDto.getItem()))
                 .booker(userMapper.toUser(bookingDto.getBooker()))
-                .statusId(bookingDto.getStatusId())
+                .statusId(bookingDto.getStatus())
                 //.status(booking.getStatus())
                 .build();
     }
@@ -63,4 +81,6 @@ public class BookingMapper {
                 .statusId(statusBooking)
                 .build();
     }
+
+
 }

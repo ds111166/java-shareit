@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.dto.BookingBriefDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -49,7 +50,7 @@ public class ItemMapper {
                 .itemRequestId(itemDto.getItemRequestId()).build();
     }
 
-    public ItemDto toItemDto(Item item, BookingDto bookingDtoLast, BookingDto bookingDtoNext) {
+    public ItemDto toItemDto(Item item, BookingBriefDto bookingDtoLast, BookingBriefDto bookingDtoNext) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -62,13 +63,13 @@ public class ItemMapper {
                 .build();
     }
 
-    public ItemDto toItemDto(Item item, BookingDto bookingDtoLast, BookingDto bookingDtoNext, List<Comment> comments) {
+    public ItemDto toItemDto(Item item, BookingBriefDto bookingDtoLast, BookingBriefDto bookingDtoNext, List<Comment> comments) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .owner(null)
+                .owner(userMapper.toUserDto(item.getOwner()))
                 .itemRequestId(item.getItemRequestId())
                 .lastBooking(bookingDtoLast)
                 .nextBooking(bookingDtoNext)
