@@ -45,15 +45,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // последнего бронирования start max end после тек даты DESC
     // используется для сортировки возвращаемых данных в порядке убывания
-    Booking findFirstByItem_IdAndEndAfterOrderByStartDesc(Long itemId, LocalDateTime nowDateTime);
+    Booking findFirstByItemIdAndStatusIdAndEndBeforeOrderByEndDesc(Long itemId,
+                                                                   StatusBooking statusBooking,
+                                                                   LocalDateTime nowDateTime);
 
     //следующее бронирование Команда ASC команда используется для сортировки возвращаемых данных в порядке возрастания
-    Booking findFirstByItem_IdAndStartAfterOrderByEndAsc(Long itemId, LocalDateTime nowDateTime);
+    Booking findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(Long itemId,
+                                                                       List<StatusBooking> statuses,
+                                                                       LocalDateTime nowDateTime);
 
-    boolean existsBookingByBookerIdAndItemIdAndStartBeforeAndStatusId(Long bookerId,
-                                                                    Long itemId,
-                                                                    LocalDateTime now,
-                                                                    StatusBooking statusBooking);
+    boolean existsByItem_IdAndBooker_IdAndEndIsBeforeAndStatusId(Long itemId,
+                                                               Long authorId,
+                                                               LocalDateTime now,
+                                                                 StatusBooking statusBooking);
 
 
 }

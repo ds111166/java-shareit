@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.booking.dto.BookingBriefDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -23,8 +24,8 @@ public class ItemDto {
     private Boolean available;       // статус о том, доступна или нет вещь для аренды
     private UserDto owner;            // владелец вещи
     private Long itemRequestId;      //  если вещь была создана по запросу - идентификатор соответствующего запроса
-    private BookingDto lastBooking;  // последнее по времени бронирования вещи
-    private BookingDto nextBooking;  // следующее по времени бронирование
+    private BookingBriefDto lastBooking;  // последнее по времени бронирования вещи
+    private BookingBriefDto nextBooking;  // следующее по времени бронирование
     private List<Comment> comments;  // комментарии
 
 }

@@ -22,5 +22,5 @@ public class BookingDto {
     private ItemDto item;            // вещь, которую пользователь бронирует
     //@NotNull(groups = Marker.OnCreate.class)
     private UserDto booker;          // пользователь, который осуществляет бронирование
-    private StatusBooking statusId; // статус бронирования
+    private StatusBooking status; // статус бронирования
 }

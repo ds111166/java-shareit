@@ -4,6 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum StatusBooking {
+    WAITING,
+    APPROVED,
+    REJECTED,
+    CANCELED;
+    /*
     WAITING(1),
     APPROVED(2),
     REJECTED(3),
@@ -27,5 +32,5 @@ public enum StatusBooking {
         }
         return null;
     }
-
+*/
 }

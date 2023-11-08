@@ -33,9 +33,10 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto getItemById(@PathVariable @NotNull Long itemId) {
+    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
+                               @PathVariable @NotNull Long itemId) {
         log.info("Запрос на получение вещи с id: {}", itemId);
-        final ItemDto itemById = itemService.getItemById(itemId);
+        final ItemDto itemById = itemService.getItemById(userId, itemId);
         log.info("Отправлена: {}", itemById);
         return itemById;
     }

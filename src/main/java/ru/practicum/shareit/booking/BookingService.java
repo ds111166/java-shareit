@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingData;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.data.State;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,9 +14,9 @@ public interface BookingService {
 
     BookingDto getBookingById(Long userId, Long bookingId);
 
-    List<BookingDto> getBookings(Long bookerId, State state);
+    List<BookingDto> getBookings(Long bookerId, String state);
 
-    List<BookingDto> getBookingsByOwnerItemId(Long ownerItemId, State state);
+    List<BookingDto> getBookingsByOwnerItemId(Long ownerItemId, String state);
 
     BookingDto findFirstByItem_IdAndEndAfterOrderByStartDesc(Long itemId, LocalDateTime nowDateTime);
 
