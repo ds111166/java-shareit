@@ -39,10 +39,10 @@ public class BookingController {
     public BookingDto approvalBooking(@RequestHeader("X-Sharer-User-Id") Long ownerItemId,
                                       @PathVariable @NotNull Long bookingId,
                                       @RequestParam(value = "approved", required = true) @NotNull Boolean approved) {
-        log.info("Обработка запроса на бронирование с id: {}, владелец вещи id: {}, подверждение: {}",
+        log.info("Обработка запроса на бронирование с id: {}, владелец вещи id: {}, подтверждение: {}",
                 bookingId, ownerItemId, approved);
         final BookingDto booking = bookingService.approvalBooking(ownerItemId, bookingId, approved);
-        log.info("Обработка запроса на бронирование с id: {}, владелец вещи id: {}, подверждение: {} - завершена",
+        log.info("Обработка запроса на бронирование с id: {}, владелец вещи id: {}, подтверждение: {} - завершена",
                 bookingId, ownerItemId, approved);
         return booking;
     }

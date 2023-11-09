@@ -3,8 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookingBriefDto;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.validation.Marker;
 
@@ -26,6 +25,5 @@ public class ItemDto {
     private Long itemRequestId;      //  если вещь была создана по запросу - идентификатор соответствующего запроса
     private BookingBriefDto lastBooking;  // последнее по времени бронирования вещи
     private BookingBriefDto nextBooking;  // следующее по времени бронирование
-    private List<Comment> comments;  // комментарии
-
+    private List<CommentDto> comments;  // комментарии
 }

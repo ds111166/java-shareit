@@ -1,4 +1,5 @@
 package ru.practicum.shareit.validation;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
@@ -15,6 +16,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface DataBookingValidate {
     String message() default "{Data Booking.invalid}";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

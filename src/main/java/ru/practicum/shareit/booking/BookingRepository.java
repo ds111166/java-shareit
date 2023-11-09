@@ -11,11 +11,7 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByBookerId(Long bookerId, Sort sorting);
 
-    /*List<Booking> findByBookerIdAndStartNotAfterAndEndNotBefore(Long bookerId, LocalDateTime nowDateTime,
-                                                                LocalDateTime nowDateTime1, Sort sorting);
-
-     */
-    List<Booking> findByBookerIdAndStartGreaterThanEqualAndEndLessThan(Long ownerItemId,
+    List<Booking> findByBookerIdAndStartLessThanAndEndGreaterThanEqual(Long ownerItemId,
                                                                        LocalDateTime nowDateTime,
                                                                        LocalDateTime nowDateTime1,
                                                                        Sort sorting);
@@ -28,11 +24,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByItem_Owner_Id(Long ownerItemId, Sort sorting);
 
-    /*List<Booking> findByItem_Owner_IdAndStartNotAfterAndEndNotBefore(Long ownerItemId,
-                                                                     LocalDateTime nowDateTime,
-                                                                     LocalDateTime nowDateTime1,
-                                                                     Sort sorting);*/
-    List<Booking> findByItem_Owner_IdAndStartGreaterThanEqualAndEndLessThan(Long ownerItemId,
+    List<Booking> findByItem_Owner_IdAndStartLessThanAndEndGreaterThanEqual(Long ownerItemId,
                                                                             LocalDateTime nowDateTime,
                                                                             LocalDateTime nowDateTime1,
                                                                             Sort sorting);
@@ -49,15 +41,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                                    StatusBooking statusBooking,
                                                                    LocalDateTime nowDateTime);
 
+    Booking findFirstByItemIdAndStatusIdAndStartBeforeOrderByEndDesc(Long itemId,
+                                                                     StatusBooking statusBooking,
+                                                                     LocalDateTime nowDateTime);
+
     //следующее бронирование Команда ASC команда используется для сортировки возвращаемых данных в порядке возрастания
     Booking findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(Long itemId,
                                                                        List<StatusBooking> statuses,
                                                                        LocalDateTime nowDateTime);
 
-    boolean existsByItem_IdAndBooker_IdAndEndIsBeforeAndStatusId(Long itemId,
+    boolean existsByItemIdAndBookerIdAndEndIsBeforeAndStatusId(Long itemId,
                                                                Long authorId,
                                                                LocalDateTime now,
-                                                                 StatusBooking statusBooking);
-
-
+                                                               StatusBooking statusBooking);
 }

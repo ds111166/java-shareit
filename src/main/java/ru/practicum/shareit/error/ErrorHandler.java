@@ -24,9 +24,7 @@ public class ErrorHandler {
         final ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now().toString())
                 .status(HttpStatus.NOT_FOUND.toString())
-                //.error(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .error(exception.getMessage())
-                //.message(exception.getMessage())
                 .build();
         log.error("{}", errorResponse.getError());
         return errorResponse;
@@ -39,7 +37,6 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().toString())
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .error(exception.getMessage())
-                //.message(exception.getMessage())
                 .build();
         log.error("{}", errorResponse.getError());
         return errorResponse;
@@ -51,9 +48,7 @@ public class ErrorHandler {
         final ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now().toString())
                 .status(HttpStatus.BAD_REQUEST.toString())
-                //.error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .error(exception.getMessage())
-                //.message(exception.getMessage())
                 .build();
         log.error("{}", errorResponse.getError());
         return errorResponse;
@@ -65,9 +60,7 @@ public class ErrorHandler {
         final ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now().toString())
                 .status(HttpStatus.CONFLICT.toString())
-                //.error(HttpStatus.CONFLICT.getReasonPhrase())
                 .error(exception.getMessage())
-                //.message(exception.getMessage())
                 .build();
         log.error("{}", errorResponse.getError());
         return errorResponse;
@@ -79,9 +72,7 @@ public class ErrorHandler {
         final ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now().toString())
                 .status(HttpStatus.FORBIDDEN.toString())
-                //.error(HttpStatus.FORBIDDEN.getReasonPhrase())
                 .error(exception.getMessage())
-                //.message(exception.getMessage())
                 .build();
         log.error("{}", errorResponse.getError());
         return errorResponse;
@@ -93,9 +84,7 @@ public class ErrorHandler {
         final ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now().toString())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
-                //.error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .error(exception.getMessage())
-                //.message(exception.getMessage())
                 .build();
         log.error("{}", errorResponse.getError());
         return errorResponse;

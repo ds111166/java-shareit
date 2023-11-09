@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class CommentMapper {
@@ -21,25 +23,18 @@ public class CommentMapper {
                 .id(comment.getId())
                 .text(comment.getText())
                 .item(itemMapper.toItemDto(comment.getItem()))
-                .author(userMapper.toUserDto(comment.getAuthor()))
+                .authorName(comment.getAuthor().getName())
+                .created(comment.getCreated())
                 .build();
     }
 
-    public Comment toComment(CommentDto commentDto) {
-        return Comment.builder()
-                .id(commentDto.getId())
-                .text(commentDto.getText())
-                .item(itemMapper.toItem(commentDto.getItem()))
-                .author(userMapper.toUser(commentDto.getAuthor()))
-                .build();
-    }
-
-    public Comment toComment(CommentDto commentDto, UserDto author, ItemDto item) {
+    public Comment toComment(CommentDto commentDto, UserDto author, ItemDto item, LocalDateTime dateTimeCreation) {
         return Comment.builder()
                 .id(commentDto.getId())
                 .text(commentDto.getText())
                 .item(itemMapper.toItem(item))
                 .author(userMapper.toUser(author))
+                .created(dateTimeCreation)
                 .build();
     }
 }

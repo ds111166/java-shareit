@@ -41,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Вещь с id: " + itemId + " не доступна для бронирования");
         }
         final Long ownerItemId = item.getOwner().getId();
-        if(bookerId.equals(ownerItemId) ) {
+        if (bookerId.equals(ownerItemId)) {
             throw new NotFoundException("Владелец id: " + ownerItemId
                     + " бронируется пользователем с id: " + bookerId +
                     "Бронирование владельцем своей вещи не допустимо");
@@ -75,7 +75,6 @@ public class BookingServiceImpl implements BookingService {
         if (!booking.getStatusId().equals(StatusBooking.WAITING)) {
             throw new ValidationException("Решение по бронированию уже принято!");
         }
-
         booking.setStatusId((approved) ? StatusBooking.APPROVED : StatusBooking.REJECTED);
         Booking savedBooking = bookingRepository.save(booking);
         return bookingMapper.toBookingDto(savedBooking);
@@ -110,10 +109,10 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByBookerId(bookerId, sorting);
                 break;
             case "CURRENT":
-                bookings = bookingRepository.findByBookerIdAndStartGreaterThanEqualAndEndLessThan(bookerId,
+                bookings = bookingRepository.findByBookerIdAndStartLessThanAndEndGreaterThanEqual(bookerId,
                         nowDateTime, nowDateTime, sorting);
                 break;
-            case "**PAST**":
+            case "PAST":
                 bookings = bookingRepository.findByBookerIdAndEndBefore(bookerId, nowDateTime, sorting);
                 break;
             case "FUTURE":
@@ -147,12 +146,10 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByItem_Owner_Id(ownerItemId, sorting);
                 break;
             case "CURRENT":
-                /*bookings = bookingRepository.findByItem_Owner_IdAndStartNotAfterAndEndNotBefore(ownerItemId,
-                        nowDateTime, nowDateTime, sorting);*/
-                bookings = bookingRepository.findByItem_Owner_IdAndStartGreaterThanEqualAndEndLessThan(ownerItemId,
+                bookings = bookingRepository.findByItem_Owner_IdAndStartLessThanAndEndGreaterThanEqual(ownerItemId,
                         nowDateTime, nowDateTime, sorting);
                 break;
-            case "**PAST**":
+            case "PAST":
                 bookings = bookingRepository.findByItem_Owner_IdAndEndBefore(ownerItemId, nowDateTime, sorting);
                 break;
             case "FUTURE":
@@ -173,24 +170,4 @@ public class BookingServiceImpl implements BookingService {
                 .map(bookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    @Transactional
-    public BookingDto findFirstByItem_IdAndEndAfterOrderByStartDesc(Long itemId, LocalDateTime nowDateTime) {
-        Booking bookingLast = bookingRepository
-               .findFirstByItemIdAndStatusIdAndEndBeforeOrderByEndDesc(itemId, StatusBooking.APPROVED,
-                       nowDateTime);
-        return bookingMapper.toBookingDto(bookingLast);
-    }
-
-    @Override
-    @Transactional
-    public BookingDto findFirstByItem_IdAndStartAfterOrderByEndAsc(Long itemId, LocalDateTime nowDateTime) {
-        Booking bookingNext = bookingRepository
-                .findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(itemId,
-                        List.of(StatusBooking.WAITING, StatusBooking.APPROVED),
-                        nowDateTime);
-        return bookingMapper.toBookingDto(bookingNext);
-    }
-
 }

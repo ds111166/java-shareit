@@ -40,15 +40,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto createUser(UserDto newUser) {
         try {
-            //final String userEmail = newUser.getEmail();
-            //checkingUserEmail(userEmail);
             final User createdUser = userRepository.save(userMapper.toUser(newUser));
             return userMapper.toUserDto(createdUser);
         } catch (DataIntegrityViolationException ex) {
             throw new ConflictException(ex.getMessage());
         }
     }
-
 
     @Override
     @Transactional

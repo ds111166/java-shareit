@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -50,15 +52,17 @@ public class ItemServiceImpl implements ItemService {
         for (Item item : items) {
             Long itemId = item.getId();
             final Booking bookingLast = bookingRepository
-                    .findFirstByItemIdAndStatusIdAndEndBeforeOrderByEndDesc(itemId,
-                            StatusBooking.APPROVED, nowDateTime);
+                    .findFirstByItemIdAndStatusIdAndStartBeforeOrderByEndDesc(itemId, StatusBooking.APPROVED, nowDateTime);
             final BookingDto bookingDtoLast = bookingMapper.toBookingDto(bookingLast);
             List<StatusBooking> statuses = List.of(StatusBooking.WAITING, StatusBooking.APPROVED);
             final Booking bookingNext = bookingRepository
                     .findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(itemId,
                             statuses, nowDateTime);
             final BookingDto bookingDtoNext = bookingMapper.toBookingDto(bookingNext);
-            List<Comment> comments = commentRepository.findAllByItemId(itemId);
+            List<CommentDto> comments = commentRepository.findAllByItemId(itemId)
+                    .stream()
+                    .map(commentMapper::toCommentDto)
+                    .collect(Collectors.toList());
             ItemDto itemDto = itemMapper.toItemDto(item,
                     bookingMapper.toBookingBriefDto(bookingDtoLast),
                     bookingMapper.toBookingBriefDto(bookingDtoNext), comments);
@@ -78,17 +82,20 @@ public class ItemServiceImpl implements ItemService {
         final LocalDateTime nowDateTime = LocalDateTime.now();
         final Booking bookingLast = (isOwner)
                 ? bookingRepository
-                .findFirstByItemIdAndStatusIdAndEndBeforeOrderByEndDesc(itemId, StatusBooking.APPROVED, nowDateTime)
+                .findFirstByItemIdAndStatusIdAndStartBeforeOrderByEndDesc(itemId, StatusBooking.APPROVED, nowDateTime)
                 : null;
         final BookingDto bookingDtoLast = bookingMapper.toBookingDto(bookingLast);
         List<StatusBooking> statuses = List.of(StatusBooking.WAITING, StatusBooking.APPROVED);
-        final Booking bookingNext = (isOwner) //StatusIdIn(Collection<Age> ages)
+        final Booking bookingNext = (isOwner)
                 ? bookingRepository
                 .findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(itemId, statuses, nowDateTime)
                 : null;
         final BookingDto bookingDtoNext = bookingMapper.toBookingDto(bookingNext);
 
-        List<Comment> comments = commentRepository.findAllByItemId(itemId);
+        List<CommentDto> comments = commentRepository.findAllByItemId(itemId)
+                .stream()
+                .map(commentMapper::toCommentDto)
+                .collect(Collectors.toList());
         return itemMapper.toItemDto(itemById,
                 bookingMapper.toBookingBriefDto(bookingDtoLast),
                 bookingMapper.toBookingBriefDto(bookingDtoNext), comments);
@@ -152,18 +159,20 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public CommentDto createComment(Long authorId, Long itemId, CommentDto newComment) {
+        final LocalDateTime now = LocalDateTime.now();
+        if (!bookingRepository
+                .existsByItemIdAndBookerIdAndEndIsBeforeAndStatusId(
+                        itemId,
+                        authorId,
+                        now,
+                        StatusBooking.APPROVED)) {
+            throw new ValidationException("Пользователь с id: " + authorId + "не пользовался вещью с id: " + itemId
+                    + " или у него не закончился срок аренды");
+        }
         final UserDto author = userService.getUserById(authorId);
         final ItemDto item = getItemById(authorId, itemId);
-        if (bookingRepository
-                //.existsBookingByBookerIdAndItemIdAndStartBeforeAndStatusId(authorId, itemId,
-                //LocalDateTime.now(), StatusBooking.APPROVED)
-                .existsByItem_IdAndBooker_IdAndEndIsBeforeAndStatusId(itemId,
-                authorId, LocalDateTime.now(), StatusBooking.APPROVED)
-
-        ) {
-            throw new ValidationException("Пользователь с id: " + authorId + "не пользовался вещью с id: " + itemId);
-        }
-        final Comment comment = commentRepository.save(commentMapper.toComment(newComment, author, item));
-        return commentMapper.toCommentDto(comment);
+        final Comment comment = commentMapper.toComment(newComment, author, item, now);
+        final Comment createdComment = commentRepository.save(comment);
+        return commentMapper.toCommentDto(createdComment);
     }
 }

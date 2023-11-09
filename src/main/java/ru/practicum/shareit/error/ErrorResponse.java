@@ -9,5 +9,4 @@ public class ErrorResponse {
     private final String timestamp;
     private final String status;
     private final String error;
-    //private final String message;
 }
