@@ -46,30 +46,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<ItemDto> getOwnerItems(Long ownerId) {
-        List<Item> items = itemRepository.findByOwnerId(ownerId);
-        List<ItemDto> itemsDto = new ArrayList<>();
-        final LocalDateTime nowDateTime = LocalDateTime.now();
-        for (Item item : items) {
-            Long itemId = item.getId();
-            final Booking bookingLast = bookingRepository
-                    .findFirstByItemIdAndStatusIdAndStartBeforeOrderByEndDesc(itemId, StatusBooking.APPROVED, nowDateTime);
-            final BookingDto bookingDtoLast = bookingMapper.toBookingDto(bookingLast);
-            List<StatusBooking> statuses = List.of(StatusBooking.WAITING, StatusBooking.APPROVED);
-            final Booking bookingNext = bookingRepository
-                    .findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(itemId,
-                            statuses, nowDateTime);
-            final BookingDto bookingDtoNext = bookingMapper.toBookingDto(bookingNext);
-            List<CommentDto> comments = commentRepository.findAllByItemId(itemId)
-                    .stream()
-                    .map(commentMapper::toCommentDto)
-                    .collect(Collectors.toList());
-            ItemDto itemDto = itemMapper.toItemDto(item,
-                    bookingMapper.toBookingBriefDto(bookingDtoLast),
-                    bookingMapper.toBookingBriefDto(bookingDtoNext), comments);
-            itemsDto.add(itemDto);
-        }
-        return itemsDto.stream().sorted(Comparator.comparing(ItemDto::getId)).collect(Collectors.toList());
 
+        List<Item> items = itemRepository.findByOwnerId(ownerId);
+        final LocalDateTime nowDateTime = LocalDateTime.now();
+        return items.stream()
+                .map(item -> makeItem(item, nowDateTime, true))
+                .sorted(Comparator.comparing(ItemDto::getId))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -79,26 +62,7 @@ public class ItemServiceImpl implements ItemService {
         final Item itemById = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещи с id = " + itemId + " не существует"));
         boolean isOwner = userId.equals(itemById.getOwner().getId());
-        final LocalDateTime nowDateTime = LocalDateTime.now();
-        final Booking bookingLast = (isOwner)
-                ? bookingRepository
-                .findFirstByItemIdAndStatusIdAndStartBeforeOrderByEndDesc(itemId, StatusBooking.APPROVED, nowDateTime)
-                : null;
-        final BookingDto bookingDtoLast = bookingMapper.toBookingDto(bookingLast);
-        List<StatusBooking> statuses = List.of(StatusBooking.WAITING, StatusBooking.APPROVED);
-        final Booking bookingNext = (isOwner)
-                ? bookingRepository
-                .findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(itemId, statuses, nowDateTime)
-                : null;
-        final BookingDto bookingDtoNext = bookingMapper.toBookingDto(bookingNext);
-
-        List<CommentDto> comments = commentRepository.findAllByItemId(itemId)
-                .stream()
-                .map(commentMapper::toCommentDto)
-                .collect(Collectors.toList());
-        return itemMapper.toItemDto(itemById,
-                bookingMapper.toBookingBriefDto(bookingDtoLast),
-                bookingMapper.toBookingBriefDto(bookingDtoNext), comments);
+        return makeItem(itemById, LocalDateTime.now(), isOwner);
     }
 
     @Override
@@ -175,4 +139,28 @@ public class ItemServiceImpl implements ItemService {
         final Comment createdComment = commentRepository.save(comment);
         return commentMapper.toCommentDto(createdComment);
     }
+
+    private ItemDto makeItem(Item item, LocalDateTime nowDateTime, boolean isOwner) {
+        final Long itemId = item.getId();
+        final Booking bookingLast = (isOwner)
+                ? bookingRepository
+                .findFirstByItemIdAndStatusIdAndStartBeforeOrderByEndDesc(itemId, StatusBooking.APPROVED, nowDateTime)
+                : null;
+        final BookingDto bookingDtoLast = bookingMapper.toBookingDto(bookingLast);
+        List<StatusBooking> statuses = List.of(StatusBooking.WAITING, StatusBooking.APPROVED);
+        final Booking bookingNext = (isOwner)
+                ? bookingRepository
+                .findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(itemId, statuses, nowDateTime)
+                : null;
+        final BookingDto bookingDtoNext = bookingMapper.toBookingDto(bookingNext);
+
+        List<CommentDto> comments = commentRepository.findAllByItemId(itemId)
+                .stream()
+                .map(commentMapper::toCommentDto)
+                .collect(Collectors.toList());
+        return itemMapper.toItemDto(item,
+                bookingMapper.toBookingBriefDto(bookingDtoLast),
+                bookingMapper.toBookingBriefDto(bookingDtoNext), comments);
+    }
+
 }
