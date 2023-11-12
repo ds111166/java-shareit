@@ -2,35 +2,35 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.dto.BookingBriefDto;
-import ru.practicum.shareit.booking.dto.BookingData;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.data.StatusBooking;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.dto.UserResponseDto;
+import ru.practicum.shareit.user.model.User;
 
 @Component
 @RequiredArgsConstructor
 public class BookingMapper {
-    private final UserMapper userMapper;
-    private final ItemMapper itemMapper;
 
-    public BookingDto toBookingDto(Booking booking) {
+    public BookingDto toBookingDto(Booking booking,
+                                   ItemResponseDto itemResponseDto,
+                                   UserResponseDto bookerDto) {
         return (booking == null) ? null : BookingDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(itemMapper.toItemDto(booking.getItem()))
-                .booker(userMapper.toUserDto(booking.getBooker()))
+                .item(itemResponseDto)
+                .booker(bookerDto)
                 .status(booking.getStatusId())
                 .build();
     }
 
-    public BookingBriefDto toBookingBriefDto(BookingDto bookingDto) {
-        return (bookingDto == null) ? null : BookingBriefDto.builder()
+    public BookingResponseDto toBookingBriefDto(BookingDto bookingDto) {
+        return (bookingDto == null) ? null : BookingResponseDto.builder()
                 .id(bookingDto.getId())
                 .bookerId(bookingDto.getBooker().getId())
                 .startTime(bookingDto.getStart())
@@ -38,16 +38,17 @@ public class BookingMapper {
                 .build();
     }
 
-    public Booking toBooking(BookingData newBookingData, ItemDto item, UserDto booker, StatusBooking statusBooking) {
+    public Booking toBooking(BookingRequestDto newBookingRequestDto,
+                             Item item,
+                             User booker,
+                             StatusBooking statusBooking) {
         return Booking.builder()
                 .id(null)
-                .start(newBookingData.getStart())
-                .end(newBookingData.getEnd())
-                .item(itemMapper.toItem(item))
-                .booker(userMapper.toUser(booker))
+                .start(newBookingRequestDto.getStart())
+                .end(newBookingRequestDto.getEnd())
+                .item(item)
+                .booker(booker)
                 .statusId(statusBooking)
                 .build();
     }
-
-
 }

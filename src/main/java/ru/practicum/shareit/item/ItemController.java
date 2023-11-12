@@ -5,8 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.comment.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.comment.dto.CommentRequestDto;
+import ru.practicum.shareit.comment.dto.CommentResponseDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
@@ -24,19 +27,21 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
+    public List<ItemResponseDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
+
         log.info("Запрос на получение списка вещей владельца с id: {}", ownerId);
-        final List<ItemDto> items = itemService.getOwnerItems(ownerId);
+        final List<ItemResponseDto> items = itemService.getOwnerItems(ownerId);
         log.info("Количество найденных вещей владельца с id: {} равно: {}", ownerId, items.size());
         return items;
     }
 
     @GetMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                               @PathVariable @NotNull Long itemId) {
+    public ItemResponseDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                       @PathVariable @NotNull Long itemId) {
+
         log.info("Запрос на получение вещи с id: {}", itemId);
-        final ItemDto itemById = itemService.getItemById(userId, itemId);
+        final ItemResponseDto itemById = itemService.getItemById(userId, itemId);
         log.info("Отправлена: {}", itemById);
         return itemById;
     }
@@ -44,10 +49,11 @@ public class ItemController {
     @PostMapping
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
-                              @Valid @RequestBody ItemDto newItem) {
+    public ItemResponseDto createItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                      @Valid @RequestBody ItemCreateDto newItem) {
+
         log.info("Запрос на добавление: {} владельцем с id: {}", newItem, ownerId);
-        final ItemDto createdItem = itemService.createItem(ownerId, newItem);
+        final ItemResponseDto createdItem = itemService.createItem(ownerId, newItem);
         log.info("Добавлена: {}", createdItem);
         return createdItem;
     }
@@ -55,20 +61,22 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     @Validated({Marker.OnUpdate.class})
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
-                              @PathVariable @NotNull Long itemId,
-                              @Valid @RequestBody ItemDto itemData) {
+    public ItemResponseDto updateItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                      @PathVariable @NotNull Long itemId,
+                                      @Valid @RequestBody ItemResponseDto itemData) {
+
         log.info("Запрос на обновление: {}, id вещи: {}, id владельца: {}", itemData, itemId, ownerId);
-        final ItemDto updatedItem = itemService.updateItem(ownerId, itemId, itemData);
+        final ItemResponseDto updatedItem = itemService.updateItem(ownerId, itemId, itemData);
         log.info("Обновлена: {}", updatedItem);
         return updatedItem;
     }
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> searchItemsByText(@RequestParam("text") String text) {
+    public List<ItemResponseDto> searchItemsByText(@RequestParam("text") String text) {
+
         log.info("Запрос поиска вещей по описанию: \"{}\"", text);
-        final List<ItemDto> items = itemService.searchItemsByText(text);
+        final List<ItemResponseDto> items = itemService.searchItemsByText(text);
         log.info("Количество найденных вещей равно: {}", items.size());
         return items;
     }
@@ -76,12 +84,13 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.OK)
-    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long authorId,
-                                    @PathVariable @NotNull Long itemId,
-                                    @Valid @RequestBody CommentDto newComment) {
+    public CommentResponseDto createComment(@RequestHeader("X-Sharer-User-Id") Long authorId,
+                                            @PathVariable @NotNull Long itemId,
+                                            @Valid @RequestBody CommentRequestDto newComment) {
+
         log.info("Запрос на добавление комментария: \"{}\" для вещи с id: {}, пользователем с id: {}",
                 newComment, itemId, authorId);
-        final CommentDto createdComment = itemService.createComment(authorId, itemId, newComment);
+        final CommentResponseDto createdComment = itemService.createComment(authorId, itemId, newComment);
         log.info("Добавлен: {}", createdComment);
         return createdComment;
     }

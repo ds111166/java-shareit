@@ -19,15 +19,15 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                 // уникальный идентификатор комментария
+    private Long id;                // уникальный идентификатор комментария
     @Column(nullable = false, length = 1024)
-    private String text;             // текст комментария
+    private String text;            // текст комментария
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
-    private Item item;            // вещь, которую комментируют
+    private Item item;              // вещь, которую комментируют
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
-    private User author;          // пользователь - автор комментария
+    private User author;            // пользователь - автор комментария
     @Column(name = "created", nullable = false)
     private LocalDateTime created;  // дата создания комментария
 }

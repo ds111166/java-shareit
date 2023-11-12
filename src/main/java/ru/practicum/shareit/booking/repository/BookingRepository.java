@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.repository;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,10 +37,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // последнего бронирования start max end после тек даты DESC
     // используется для сортировки возвращаемых данных в порядке убывания
-    Booking findFirstByItemIdAndStatusIdAndEndBeforeOrderByEndDesc(Long itemId,
-                                                                   StatusBooking statusBooking,
-                                                                   LocalDateTime nowDateTime);
-
     Booking findFirstByItemIdAndStatusIdAndStartBeforeOrderByEndDesc(Long itemId,
                                                                      StatusBooking statusBooking,
                                                                      LocalDateTime nowDateTime);

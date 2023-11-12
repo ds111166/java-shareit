@@ -1,21 +1,25 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingData;
+import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.data.StatusBooking;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -30,13 +34,15 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
     private final UserService userService;
     private final ItemService itemService;
+    private final UserMapper userMapper;
+    private final ItemMapper itemMapper;
 
     @Override
     @Transactional
-    public BookingDto createBooking(Long bookerId, BookingData newBookingData) {
-        UserDto booker = userService.getUserById(bookerId);
-        final Long itemId = newBookingData.getItemId();
-        final ItemDto item = itemService.getItemById(bookerId, itemId);
+    public BookingDto createBooking(Long bookerId, BookingRequestDto newBookingRequestDto) {
+        UserResponseDto booker = userService.getUserById(bookerId);
+        final Long itemId = newBookingRequestDto.getItemId();
+        final ItemResponseDto item = itemService.getItemById(bookerId, itemId);
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь с id: " + itemId + " не доступна для бронирования");
         }
@@ -47,9 +53,14 @@ public class BookingServiceImpl implements BookingService {
                     "Бронирование владельцем своей вещи не допустимо");
         }
         try {
-            Booking booking = bookingMapper.toBooking(newBookingData, item, booker, StatusBooking.WAITING);
+            Booking booking = bookingMapper.toBooking(newBookingRequestDto,
+                    itemMapper.toItem(item, userMapper.toUser(item.getOwner())),
+                    userMapper.toUser(booker),
+                    StatusBooking.WAITING);
             Booking createdBooking = bookingRepository.save(booking);
-            return bookingMapper.toBookingDto(createdBooking);
+            return bookingMapper.toBookingDto(createdBooking,
+                    itemMapper.toItemDto(createdBooking.getItem()),
+                    userMapper.toUserDto(createdBooking.getBooker()));
         } catch (DataIntegrityViolationException ex) {
             throw new ConflictException(ex.getMessage());
         }
@@ -61,7 +72,7 @@ public class BookingServiceImpl implements BookingService {
         userService.getUserById(ownerItemId);
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирования с id = " + bookingId + " не существует"));
-        ItemDto item = itemService.getItemById(ownerItemId, booking.getItem().getId());
+        ItemResponseDto item = itemService.getItemById(ownerItemId, booking.getItem().getId());
         if (!ownerItemId.equals(item.getOwner().getId())) {
             throw new NotFoundException("Пользователь с id: " + ownerItemId
                     + " не является владельцем вещи, которая бронируется с id: " + bookingId);
@@ -77,7 +88,9 @@ public class BookingServiceImpl implements BookingService {
         }
         booking.setStatusId((approved) ? StatusBooking.APPROVED : StatusBooking.REJECTED);
         Booking savedBooking = bookingRepository.save(booking);
-        return bookingMapper.toBookingDto(savedBooking);
+        return bookingMapper.toBookingDto(savedBooking,
+                itemMapper.toItemDto(savedBooking.getItem()),
+                userMapper.toUserDto(savedBooking.getBooker()));
     }
 
     @Override
@@ -88,13 +101,15 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Бронирования с id = " + bookingId + " не существует"));
         User booker = booking.getBooker();
         boolean isBooker = userId.equals(booker.getId());
-        ItemDto item = itemService.getItemById(userId, booking.getItem().getId());
+        ItemResponseDto item = itemService.getItemById(userId, booking.getItem().getId());
         boolean isOwnerItem = userId.equals(item.getOwner().getId());
         if (!isBooker && !isOwnerItem) {
             throw new NotFoundException("Пользователь с id: " + userId
                     + " не является ни владельцем вещи ни автором бронирования с id: " + bookingId);
         }
-        return bookingMapper.toBookingDto(booking);
+        return bookingMapper.toBookingDto(booking,
+                itemMapper.toItemDto(booking.getItem()),
+                userMapper.toUserDto(booking.getBooker()));
     }
 
     @Override
@@ -130,7 +145,9 @@ public class BookingServiceImpl implements BookingService {
                 throw new ValidationException("Unknown state: " + state);
         }
         return bookings.stream()
-                .map(bookingMapper::toBookingDto)
+                .map(booking -> bookingMapper.toBookingDto(booking,
+                        itemMapper.toItemDto(booking.getItem()),
+                        userMapper.toUserDto(booking.getBooker())))
                 .collect(Collectors.toList());
     }
 
@@ -167,7 +184,9 @@ public class BookingServiceImpl implements BookingService {
                 throw new ValidationException("Unknown state: " + state);
         }
         return bookings.stream()
-                .map(bookingMapper::toBookingDto)
+                .map(booking -> bookingMapper.toBookingDto(booking,
+                        itemMapper.toItemDto(booking.getItem()),
+                        userMapper.toUserDto(booking.getBooker())))
                 .collect(Collectors.toList());
     }
 }

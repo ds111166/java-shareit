@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.dto.BookingData;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
@@ -26,9 +27,9 @@ public class BookingController {
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.CREATED)
     public BookingDto createBooking(@RequestHeader("X-Sharer-User-Id") Long bookerId,
-                                    @Valid @RequestBody BookingData newBookingData) {
-        log.info("Запрос на создание: \"{}\" от пользователя с id: {}", newBookingData, bookerId);
-        final BookingDto booking = bookingService.createBooking(bookerId, newBookingData);
+                                    @Valid @RequestBody BookingRequestDto newBookingRequestDto) {
+        log.info("Запрос на создание: \"{}\" от пользователя с id: {}", newBookingRequestDto, bookerId);
+        final BookingDto booking = bookingService.createBooking(bookerId, newBookingRequestDto);
         log.info("Создан: \"{}\"", booking);
         return booking;
     }
@@ -38,7 +39,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.OK)
     public BookingDto approvalBooking(@RequestHeader("X-Sharer-User-Id") Long ownerItemId,
                                       @PathVariable @NotNull Long bookingId,
-                                      @RequestParam(value = "approved", required = true) @NotNull Boolean approved) {
+                                      @RequestParam(value = "approved") @NotNull Boolean approved) {
         log.info("Обработка запроса на бронирование с id: {}, владелец вещи id: {}, подтверждение: {}",
                 bookingId, ownerItemId, approved);
         final BookingDto booking = bookingService.approvalBooking(ownerItemId, bookingId, approved);

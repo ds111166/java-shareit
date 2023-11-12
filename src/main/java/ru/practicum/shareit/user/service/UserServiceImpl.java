@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.dto.UseRequestDto;
+import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +25,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<UserDto> getUsers() {
+    public List<UserResponseDto> getUsers() {
+
         return userRepository.findAll().stream()
                 .map(userMapper::toUserDto)
                 .collect(Collectors.toList());
@@ -30,7 +34,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto getUserById(Long userId) {
+    public UserResponseDto getUserById(Long userId) {
+
         final User userById = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователя с id = " + userId + " не существует"));
         return userMapper.toUserDto(userById);
@@ -38,7 +43,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto createUser(UserDto newUser) {
+    public UserResponseDto createUser(UseRequestDto newUser) {
+
         try {
             final User createdUser = userRepository.save(userMapper.toUser(newUser));
             return userMapper.toUserDto(createdUser);
@@ -49,7 +55,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto updateUser(Long userId, UserDto userData) {
+    public UserResponseDto updateUser(Long userId, UserResponseDto userData) {
+
         final User updateUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователя с id = " + userId + " не существует"));
         final String name = userData.getName();
