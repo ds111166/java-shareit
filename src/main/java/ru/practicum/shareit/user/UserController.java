@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UseRequestDto;
+import ru.practicum.shareit.user.dto.UserResponseDto;
+import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
@@ -23,18 +25,20 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> getUsers() {
+    public List<UserResponseDto> getUsers() {
+
         log.info("Запрос на получение списка всех пользователей");
-        final List<UserDto> users = userService.getUsers();
+        final List<UserResponseDto> users = userService.getUsers();
         log.info("Количество всех пользователей равно: {}", users.size());
         return users;
     }
 
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto getUserById(@PathVariable @NotNull Long userId) {
+    public UserResponseDto getUserById(@PathVariable @NotNull Long userId) {
+
         log.info("Запрос на получение пользователя с id: {}", userId);
-        final UserDto userById = userService.getUserById(userId);
+        final UserResponseDto userById = userService.getUserById(userId);
         log.info("Отправлен: \"{}\"", userById);
         return userById;
     }
@@ -42,9 +46,10 @@ public class UserController {
     @PostMapping
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Valid @RequestBody UserDto newUser) {
+    public UserResponseDto createUser(@Valid @RequestBody UseRequestDto newUser) {
+
         log.info("Запрос на создание: \"{}\"", newUser);
-        final UserDto user = userService.createUser(newUser);
+        final UserResponseDto user = userService.createUser(newUser);
         log.info("Создан: \"{}\"", user);
         return user;
     }
@@ -52,10 +57,11 @@ public class UserController {
     @PatchMapping("/{userId}")
     @Validated({Marker.OnUpdate.class})
     @ResponseStatus(HttpStatus.OK)
-    public UserDto updateUser(@PathVariable @NotNull Long userId,
-                              @Valid @RequestBody UserDto updatedUser) {
+    public UserResponseDto updateUser(@PathVariable @NotNull Long userId,
+                                      @Valid @RequestBody UserResponseDto updatedUser) {
+
         log.info("Запрос на обновление: \"{}\"", updatedUser);
-        final UserDto user = userService.updateUser(userId, updatedUser);
+        final UserResponseDto user = userService.updateUser(userId, updatedUser);
         log.info("Обновлён: \"{}\"", user);
         return user;
     }
@@ -63,6 +69,7 @@ public class UserController {
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser(@PathVariable @NotNull Long userId) {
+
         log.info("Запрос на удаление пользователя с id: {}", userId);
         userService.deleteUser(userId);
         log.info("Пользователь с id: {} удален", userId);

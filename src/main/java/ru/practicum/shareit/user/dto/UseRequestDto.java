@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.constraints.Email;
@@ -10,8 +12,9 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
-public class UserDto {
-    private Long id;        // уникальный идентификатор пользователя
+@AllArgsConstructor
+@NoArgsConstructor
+public class UseRequestDto {
     @NotNull(groups = Marker.OnCreate.class)
     private String name;    // имя или логин пользователя
     @NotNull(groups = Marker.OnCreate.class)
