@@ -40,7 +40,7 @@ public class ItemController {
     public ItemResponseDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                        @PathVariable @NotNull Long itemId) {
 
-        log.info("Запрос на получение вещи с id: {}", itemId);
+        log.info("Запрос на получение вещи с id: {} от пользователя с id: {}", itemId, userId);
         final ItemResponseDto itemById = itemService.getItemById(userId, itemId);
         log.info("Отправлена: {}", itemById);
         return itemById;
