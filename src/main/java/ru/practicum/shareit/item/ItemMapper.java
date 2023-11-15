@@ -48,6 +48,7 @@ public class ItemMapper {
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
                 .owner(owner)
+                .itemRequestId(itemDto.getItemRequestId())
                 .build();
     }
 

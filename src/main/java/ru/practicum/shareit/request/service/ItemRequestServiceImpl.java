@@ -1,7 +1,11 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -15,8 +19,9 @@ import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
 
     @Override
+    @Transactional
     public ItemRequestResponseDto createItemRequest(Long requestorId, ItemRequestCreateDto newItemRequest) {
         final User requestor = userMapper.toUser(userService.getUserById(requestorId));
         ItemRequest itemRequest = itemRequestMapper.toItemRequest(newItemRequest, requestor);
@@ -39,6 +45,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional
     public ItemRequestResponseDto getItemRequestById(Long userId, Long requestId) {
         userService.getUserById(userId);
         final ItemRequest  itemRequestById = itemRequestRepository.findById(requestId)
@@ -46,5 +53,38 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<ItemResponseDto> itemsDto = itemRepository.findByRequestId(requestId);
         final UserResponseDto userDto = userMapper.toUserDto(itemRequestById.getRequester());
         return itemRequestMapper.toItemRequestResponseDto(itemRequestById, userDto, itemsDto);
+    }
+
+    @Override
+    @Transactional
+    public List<ItemRequestResponseDto> getItemRequests(Long requestorId) {
+        userMapper.toUser(userService.getUserById(requestorId));
+        final List<ItemRequest> itemRequests =  itemRequestRepository
+                .findByRequestorIdOrderByCreatedDesc(requestorId);
+        return itemRequests
+                .stream()
+                .map(itemRequest ->itemRequestMapper.toItemRequestResponseDto(itemRequest,
+                        userMapper.toUserDto(itemRequest.getRequester()),
+                        itemRepository.findByRequestId(itemRequest.getRequester().getId())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<ItemRequestResponseDto> getItemRequestsAll(Long userId, Integer from, Integer size) {
+        userService.getUserById(userId);
+        if(size == 0) {
+            return new ArrayList<>();
+        }
+        Pageable sortedByCreated = PageRequest.of(from / size, size, Sort.by("created").descending());
+        final List<ItemRequest> itemRequests =  itemRequestRepository
+                .findByRequestorIdNot(userId, sortedByCreated);
+
+        return itemRequests
+                .stream()
+                .map(itemRequest ->itemRequestMapper.toItemRequestResponseDto(itemRequest,
+                        userMapper.toUserDto(itemRequest.getRequester()),
+                        itemRepository.findByRequestId(itemRequest.getRequester().getId())))
+                .collect(Collectors.toList());
     }
 }

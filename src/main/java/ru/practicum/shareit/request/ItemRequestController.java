@@ -12,7 +12,9 @@ import ru.practicum.shareit.validation.Marker;
 
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -35,7 +37,7 @@ public class ItemRequestController {
         return createdItemRequest;
     }
 
-    @GetMapping("{requestId}")
+    @GetMapping("/{requestId}")
     @ResponseStatus(HttpStatus.OK)
     public ItemRequestResponseDto getItemRequestById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                      @PathVariable @NotNull Long requestId) {
@@ -43,6 +45,41 @@ public class ItemRequestController {
         ItemRequestResponseDto itemRequestById = itemRequestService.getItemRequestById(userId, requestId);
         log.info("Отправлен: {}", itemRequestById);
         return itemRequestById;
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ItemRequestResponseDto> getItemRequests(@RequestHeader("X-Sharer-User-Id") Long requestorId) {
+        log.info("Запрос на получение запросов вещей от пользователя с id: {}", requestorId);
+        List<ItemRequestResponseDto> itemRequests = itemRequestService.getItemRequests(requestorId);
+        log.info("\"Количество найденных запросов вещей от пользователя с id: {} равно: {}\"",
+                requestorId, itemRequests.size());
+        return itemRequests;
+    }
+
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ItemRequestResponseDto>
+    getItemRequestsAll(@RequestHeader("X-Sharer-User-Id")
+                       Long userId,
+                       @Min(value=0, message = "Индекс первого элемента не должен быть меньше нуля!")
+                       @RequestParam(value = "from", defaultValue = "0")
+                       Integer from,
+                       @Min(value=0,  message = "Количество элементов для отображения не должно быть меньше нуля!")
+                       @RequestParam(value = "size", required = false)
+                       Integer size) {
+        log.info("Запрос от пользователя с id: {} на получение запросов вещей от других пользователей,\n " +
+                "по странично, начиная с позиции: {}, величина страницы: {} ",
+                userId,
+                from,
+                (size == null) ? "\"не определена\"" : size);
+        List<ItemRequestResponseDto> itemRequests = itemRequestService.getItemRequestsAll(
+                userId,
+                from,
+                (size == null) ? Integer.MAX_VALUE : size);
+        log.info("\"Количество найденных запросов вещей от пользователей равно: {}\"",
+                itemRequests.size());
+        return itemRequests;
     }
 
 }

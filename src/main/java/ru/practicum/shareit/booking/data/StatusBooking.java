@@ -1,4 +1,4 @@
-package ru.practicum.shareit.data;
+package ru.practicum.shareit.booking.data;
 
 import lombok.Getter;
 

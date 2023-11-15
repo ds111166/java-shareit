@@ -13,6 +13,7 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -27,10 +28,18 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemResponseDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
-
+    public List<ItemResponseDto> getOwnerItems(
+            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
+            @RequestParam(value = "from", defaultValue = "0")
+            Integer from,
+            @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
+            @RequestParam(value = "size", required = false)
+            Integer size) {
         log.info("Запрос на получение списка вещей владельца с id: {}", ownerId);
-        final List<ItemResponseDto> items = itemService.getOwnerItems(ownerId);
+        final List<ItemResponseDto> items = itemService.getOwnerItems(ownerId,
+                from,
+                (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество найденных вещей владельца с id: {} равно: {}", ownerId, items.size());
         return items;
     }
@@ -51,7 +60,6 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     public ItemResponseDto createItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                       @Valid @RequestBody ItemCreateDto newItem) {
-
         log.info("Запрос на добавление: {} владельцем с id: {}", newItem, ownerId);
         final ItemResponseDto createdItem = itemService.createItem(ownerId, newItem);
         log.info("Добавлена: {}", createdItem);
@@ -73,10 +81,18 @@ public class ItemController {
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemResponseDto> searchItemsByText(@RequestParam("text") String text) {
-
+    public List<ItemResponseDto> searchItemsByText(
+            @RequestParam("text") String text,
+            @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
+            @RequestParam(value = "from", defaultValue = "0")
+            Integer from,
+            @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
+            @RequestParam(value = "size", required = false)
+            Integer size) {
         log.info("Запрос поиска вещей по описанию: \"{}\"", text);
-        final List<ItemResponseDto> items = itemService.searchItemsByText(text);
+        final List<ItemResponseDto> items = itemService.searchItemsByText(text,
+                from,
+                (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество найденных вещей равно: {}", items.size());
         return items;
     }

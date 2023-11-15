@@ -3,6 +3,9 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -14,7 +17,7 @@ import ru.practicum.shareit.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.comment.dto.CommentResponseDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
-import ru.practicum.shareit.data.StatusBooking;
+import ru.practicum.shareit.booking.data.StatusBooking;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -49,9 +52,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemResponseDto> getOwnerItems(Long ownerId) {
-
-        List<Item> items = itemRepository.findByOwnerId(ownerId);
+    public List<ItemResponseDto> getOwnerItems(Long ownerId, Integer from, Integer size) {
+        userService.getUserById(ownerId);
+        if(size == 0) {
+            return new ArrayList<>();
+        }
+        Pageable sortedById = PageRequest.of(from / size, size, Sort.by("id").ascending());
+        List<Item> items = itemRepository.findByOwnerId(ownerId, sortedById);
         final LocalDateTime nowDateTime = LocalDateTime.now();
         return items.stream()
                 .map(item -> makeItem(item, nowDateTime, true))
@@ -117,12 +124,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemResponseDto> searchItemsByText(String text) {
+    public List<ItemResponseDto> searchItemsByText(String text, Integer from, Integer size) {
 
-        if (text == null || text.isEmpty() || text.isBlank()) {
+        if (text == null || text.isEmpty() || text.isBlank() || size == 0) {
             return new ArrayList<>();
         }
-        return itemRepository.searchItemsByText(text)
+        Pageable sortedById = PageRequest.of(from / size, size, Sort.by("id").ascending());
+        return itemRepository.searchItemsByText(text, sortedById)
                 .stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
