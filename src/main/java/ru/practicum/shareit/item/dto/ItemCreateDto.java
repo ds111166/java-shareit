@@ -20,5 +20,5 @@ public class ItemCreateDto {
     private String description;      // развёрнутое описание
     @NotNull(groups = Marker.OnCreate.class)
     private Boolean available;       // статус о том, доступна или нет вещь для аренды
-    private Long itemRequestId;      //  если вещь была создана по запросу - идентификатор соответствующего запроса
+    private Long requestId;      //  если вещь была создана по запросу - идентификатор соответствующего запроса
 }

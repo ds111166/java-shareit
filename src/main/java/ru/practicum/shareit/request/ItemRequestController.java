@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
+import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.validation.Marker;
-
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -62,14 +61,14 @@ public class ItemRequestController {
     public List<ItemRequestResponseDto>
     getItemRequestsAll(@RequestHeader("X-Sharer-User-Id")
                        Long userId,
-                       @Min(value=0, message = "Индекс первого элемента не должен быть меньше нуля!")
+                       @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
                        @RequestParam(value = "from", defaultValue = "0")
                        Integer from,
-                       @Min(value=0,  message = "Количество элементов для отображения не должно быть меньше нуля!")
+                       @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
                        @RequestParam(value = "size", required = false)
                        Integer size) {
         log.info("Запрос от пользователя с id: {} на получение запросов вещей от других пользователей,\n " +
-                "по странично, начиная с позиции: {}, величина страницы: {} ",
+                        "по странично, начиная с позиции: {}, величина страницы: {} ",
                 userId,
                 from,
                 (size == null) ? "\"не определена\"" : size);

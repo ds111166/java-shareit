@@ -2,11 +2,11 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.data.StatusBooking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.data.StatusBooking;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserResponseDto;
@@ -29,7 +29,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public BookingResponseDto toBookingBriefDto(BookingDto bookingDto) {
+    public BookingResponseDto toBookingResponseDto(BookingDto bookingDto) {
         return (bookingDto == null) ? null : BookingResponseDto.builder()
                 .id(bookingDto.getId())
                 .bookerId(bookingDto.getBooker().getId())

@@ -14,5 +14,5 @@ Template repository for Shareit project.
 Параметры будут такими же, как и для эндпоинта на получение запросов вещей: номер первой записи и желаемое количество элементов для отображения:
 * **✓✓** `GET /items` -> `GET /items?from={from}&size={size}`
 * **✓✓** `GET /items/search` -> `GET /items/search?from={from}&size={size}`
-* `GET /bookings` -> `GET /bookings?from={from}&size={size}`
-* `GET /bookings/owner` -> `GET /bookings/owner?from={from}&size={size}`
+* **✓✓** `GET /bookings` -> `GET /bookings?from={from}&size={size}`
+* **✓✓** `GET /bookings/owner` -> `GET /bookings/owner?from={from}&size={size}`

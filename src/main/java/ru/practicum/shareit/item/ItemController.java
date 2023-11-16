@@ -36,9 +36,10 @@ public class ItemController {
             @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
             @RequestParam(value = "size", required = false)
             Integer size) {
-        log.info("Запрос на получение списка вещей владельца с id: {}", ownerId);
-        final List<ItemResponseDto> items = itemService.getOwnerItems(ownerId,
-                from,
+        log.info("Запрос на получение списка вещей владельца с id: {}." +
+                " Индекс первого элемента: {}." +
+                " Количество элементов для отображения: {}", ownerId, from, size);
+        final List<ItemResponseDto> items = itemService.getOwnerItems(ownerId, from,
                 (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество найденных вещей владельца с id: {} равно: {}", ownerId, items.size());
         return items;
@@ -89,9 +90,9 @@ public class ItemController {
             @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
             @RequestParam(value = "size", required = false)
             Integer size) {
-        log.info("Запрос поиска вещей по описанию: \"{}\"", text);
-        final List<ItemResponseDto> items = itemService.searchItemsByText(text,
-                from,
+        log.info("Запрос поиска вещей по описанию: \"{}\". Индекс первого элемента: {}." +
+                "Количество элементов для отображения: {}", text, from, size);
+        final List<ItemResponseDto> items = itemService.searchItemsByText(text, from,
                 (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество найденных вещей равно: {}", items.size());
         return items;

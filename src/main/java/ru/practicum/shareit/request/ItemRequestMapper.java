@@ -1,5 +1,7 @@
 package ru.practicum.shareit.request;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
@@ -10,13 +12,15 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Component
+@RequiredArgsConstructor
 public class ItemRequestMapper {
 
     public ItemRequest toItemRequest(ItemRequestCreateDto newItemRequest, User requestor) {
         return ItemRequest.builder()
                 .id(null)
                 .description(newItemRequest.getDescription())
-                .requester(requestor)
+                .requestor(requestor)
                 .created(LocalDateTime.now())
                 .build();
     }

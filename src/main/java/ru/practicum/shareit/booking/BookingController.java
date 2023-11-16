@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -60,13 +61,18 @@ public class BookingController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<BookingDto> getBookings(@RequestHeader("X-Sharer-User-Id") Long bookerId,
-                                        @RequestParam(value = "state",
-                                                defaultValue = "ALL",
-                                                required = false) String state) {
-        log.info("Запрос на получение списка бронирований в состоянии: \"{}\" пользователя с id: {}",
-                state, bookerId);
-        List<BookingDto> bookings = bookingService.getBookings(bookerId, state);
+    public List<BookingDto> getBookings(
+            @RequestHeader("X-Sharer-User-Id") Long bookerId,
+            @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
+            @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
+            @RequestParam(value = "size", required = false) Integer size) {
+        log.info("Запрос на получение списка бронирований в состоянии: \"{}\" пользователя с id: {}\n" +
+                        "Индекс первого элемента: {}. Количество элементов для отображения: {}",
+                state, bookerId, from, size);
+        List<BookingDto> bookings = bookingService.getBookings(bookerId, state, from,
+                (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество бронирований в состоянии: \"{}\" пользователя с id: {} равно: {}",
                 state, bookerId, bookings.size());
         return bookings;
@@ -74,13 +80,18 @@ public class BookingController {
 
     @GetMapping("/owner")
     @ResponseStatus(HttpStatus.OK)
-    public List<BookingDto> getBookingsByOwnerItemId(@RequestHeader("X-Sharer-User-Id") Long ownerItemId,
-                                                     @RequestParam(value = "state",
-                                                             defaultValue = "ALL",
-                                                             required = false) String state) {
-        log.info("Запрос на получение списка бронирований в состоянии: \"{}\" вещей владельца с id: {}",
-                state, ownerItemId);
-        List<BookingDto> bookings = bookingService.getBookingsByOwnerItemId(ownerItemId, state);
+    public List<BookingDto> getBookingsByOwnerItemId(
+            @RequestHeader("X-Sharer-User-Id") Long ownerItemId,
+            @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
+            @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
+            @RequestParam(value = "size", required = false) Integer size) {
+        log.info("Запрос на получение списка бронирований в состоянии: \"{}\" вещей владельца с id: {}\n" +
+                        "Индекс первого элемента: {}. Количество элементов для отображения: {}",
+                state, ownerItemId, from, size);
+        List<BookingDto> bookings = bookingService.getBookingsByOwnerItemId(ownerItemId, state, from,
+                (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество бронирований в состоянии: \"{}\" вещей владельца с id: {} равно: {}",
                 state, ownerItemId, bookings.size());
         return bookings;

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.data.StatusBooking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -17,7 +18,6 @@ import ru.practicum.shareit.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.comment.dto.CommentResponseDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
-import ru.practicum.shareit.booking.data.StatusBooking;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -32,6 +32,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.ValidationException;
+import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,13 +53,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemResponseDto> getOwnerItems(Long ownerId, Integer from, Integer size) {
+    public List<ItemResponseDto> getOwnerItems(Long ownerId, @Min(0) Integer from, @Min(0) Integer size) {
         userService.getUserById(ownerId);
-        if(size == 0) {
+        if (size == 0) {
             return new ArrayList<>();
         }
-        Pageable sortedById = PageRequest.of(from / size, size, Sort.by("id").ascending());
-        List<Item> items = itemRepository.findByOwnerId(ownerId, sortedById);
+        final Pageable sortedById = PageRequest.of(from / size, size, Sort.by("id").ascending());
+        final List<Item> items = itemRepository.findByOwnerId(ownerId, sortedById);
         final LocalDateTime nowDateTime = LocalDateTime.now();
         return items.stream()
                 .map(item -> makeItem(item, nowDateTime, true))
@@ -124,12 +125,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemResponseDto> searchItemsByText(String text, Integer from, Integer size) {
+    public List<ItemResponseDto> searchItemsByText(String text, @Min(0) Integer from, @Min(0) Integer size) {
 
         if (text == null || text.isEmpty() || text.isBlank() || size == 0) {
             return new ArrayList<>();
         }
-        Pageable sortedById = PageRequest.of(from / size, size, Sort.by("id").ascending());
+        final Pageable sortedById = PageRequest.of(from / size, size, Sort.by("id").ascending());
         return itemRepository.searchItemsByText(text, sortedById)
                 .stream()
                 .map(itemMapper::toItemDto)
@@ -161,6 +162,15 @@ public class ItemServiceImpl implements ItemService {
         return commentMapper.toCommentDto(createdComment, itemMapper.toItemDto(comment.getItem()));
     }
 
+    @Override
+    @Transactional
+    public List<ItemResponseDto> findByItemRequestId(Long requestId) {
+        return itemRepository.findByRequestId(requestId, Sort.by(Sort.Direction.DESC, "id"))
+                .stream()
+                .map(itemMapper::toItemDto)
+                .collect(Collectors.toList());
+    }
+
     private ItemResponseDto makeItem(Item item, LocalDateTime nowDateTime, boolean isOwner) {
 
         final Long itemId = item.getId();
@@ -185,10 +195,13 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(comment -> commentMapper.toCommentDto(comment, itemMapper.toItemDto(comment.getItem())))
                 .collect(Collectors.toList());
-        return itemMapper.toItemDto(item,
+        return itemMapper.toItemDto(
+                item,
                 userMapper.toUserDto(item.getOwner()),
-                bookingMapper.toBookingBriefDto(bookingDtoLast),
-                bookingMapper.toBookingBriefDto(bookingDtoNext), comments);
+                bookingMapper.toBookingResponseDto(bookingDtoLast),
+                bookingMapper.toBookingResponseDto(bookingDtoNext),
+                comments
+        );
     }
 
 }
