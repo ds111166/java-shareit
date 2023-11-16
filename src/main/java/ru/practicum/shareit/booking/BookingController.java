@@ -66,7 +66,7 @@ public class BookingController {
             @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
             @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
             @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
+            @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
         log.info("Запрос на получение списка бронирований в состоянии: \"{}\" пользователя с id: {}\n" +
                         "Индекс первого элемента: {}. Количество элементов для отображения: {}",
@@ -85,7 +85,7 @@ public class BookingController {
             @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
             @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
             @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
+            @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
         log.info("Запрос на получение списка бронирований в состоянии: \"{}\" вещей владельца с id: {}\n" +
                         "Индекс первого элемента: {}. Количество элементов для отображения: {}",

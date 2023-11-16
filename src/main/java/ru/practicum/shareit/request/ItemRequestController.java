@@ -58,24 +58,17 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemRequestResponseDto>
-    getItemRequestsAll(@RequestHeader("X-Sharer-User-Id")
-                       Long userId,
-                       @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
-                       @RequestParam(value = "from", defaultValue = "0")
-                       Integer from,
-                       @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
-                       @RequestParam(value = "size", required = false)
-                       Integer size) {
+    public List<ItemRequestResponseDto> getItemRequestsAll(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
+            @RequestParam(value = "size", required = false) Integer size) {
         log.info("Запрос от пользователя с id: {} на получение запросов вещей от других пользователей,\n " +
                         "по странично, начиная с позиции: {}, величина страницы: {} ",
-                userId,
-                from,
-                (size == null) ? "\"не определена\"" : size);
-        List<ItemRequestResponseDto> itemRequests = itemRequestService.getItemRequestsAll(
-                userId,
-                from,
-                (size == null) ? Integer.MAX_VALUE : size);
+                userId, from, (size == null) ? "\"не определена\"" : size);
+        List<ItemRequestResponseDto> itemRequests = itemRequestService.getItemRequestsAll(userId,
+                from, (size == null) ? Integer.MAX_VALUE : size);
         log.info("\"Количество найденных запросов вещей от пользователей равно: {}\"",
                 itemRequests.size());
         return itemRequests;

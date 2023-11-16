@@ -31,11 +31,9 @@ public class ItemController {
     public List<ItemResponseDto> getOwnerItems(
             @RequestHeader("X-Sharer-User-Id") Long ownerId,
             @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
-            @RequestParam(value = "from", defaultValue = "0")
-            Integer from,
-            @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
-            @RequestParam(value = "size", required = false)
-            Integer size) {
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
+            @RequestParam(value = "size", required = false) Integer size) {
         log.info("Запрос на получение списка вещей владельца с id: {}." +
                 " Индекс первого элемента: {}." +
                 " Количество элементов для отображения: {}", ownerId, from, size);
@@ -85,11 +83,9 @@ public class ItemController {
     public List<ItemResponseDto> searchItemsByText(
             @RequestParam("text") String text,
             @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
-            @RequestParam(value = "from", defaultValue = "0")
-            Integer from,
-            @Min(value = 0, message = "Количество элементов для отображения не должно быть меньше нуля!")
-            @RequestParam(value = "size", required = false)
-            Integer size) {
+            @RequestParam(value = "from", defaultValue = "0") Integer from,
+            @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
+            @RequestParam(value = "size", required = false) Integer size) {
         log.info("Запрос поиска вещей по описанию: \"{}\". Индекс первого элемента: {}." +
                 "Количество элементов для отображения: {}", text, from, size);
         final List<ItemResponseDto> items = itemService.searchItemsByText(text, from,

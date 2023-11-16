@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemResponseDto> getOwnerItems(Long ownerId, @Min(0) Integer from, @Min(0) Integer size) {
+    public List<ItemResponseDto> getOwnerItems(Long ownerId, @Min(0) Integer from, @Min(1) Integer size) {
         userService.getUserById(ownerId);
         if (size == 0) {
             return new ArrayList<>();
@@ -125,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemResponseDto> searchItemsByText(String text, @Min(0) Integer from, @Min(0) Integer size) {
+    public List<ItemResponseDto> searchItemsByText(String text, @Min(0) Integer from, @Min(1) Integer size) {
 
         if (text == null || text.isEmpty() || text.isBlank() || size == 0) {
             return new ArrayList<>();

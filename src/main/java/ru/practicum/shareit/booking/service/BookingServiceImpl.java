@@ -118,7 +118,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public List<BookingDto> getBookings(Long bookerId, String state, @Min(0) Integer from, @Min(0) Integer size) {
+    public List<BookingDto> getBookings(Long bookerId, String state, @Min(0) Integer from, @Min(1) Integer size) {
         userService.getUserById(bookerId);
         if (size == 0) {
             return new ArrayList<>();
@@ -162,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public List<BookingDto> getBookingsByOwnerItemId(Long ownerItemId, String state,
-                                                     @Min(0) Integer from, @Min(0) Integer size) {
+                                                     @Min(0) Integer from, @Min(1) Integer size) {
         userService.getUserById(ownerItemId);
         List<Booking> bookings;
         final Sort sorting = Sort.by(Sort.Order.desc("start"));
