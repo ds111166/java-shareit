@@ -15,7 +15,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             " or upper(i.description) like upper(concat('%', ?1, '%')))")
     List<Item> searchItemsByText(String text, Pageable sortedById);
 
-    List<Item> findByOwnerId(Long ownerId, Pageable sortedById);
+    List<Item> findByOwnerId(Long ownerId, Pageable pageableSorted);
 
     List<Item> findByRequestId(Long requestId, Sort sort);
 }

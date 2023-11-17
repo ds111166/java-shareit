@@ -27,8 +27,10 @@ public class BookingController {
     @PostMapping
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingDto createBooking(@RequestHeader("X-Sharer-User-Id") Long bookerId,
-                                    @Valid @RequestBody BookingRequestDto newBookingRequestDto) {
+    public BookingDto createBooking(
+            @RequestHeader("X-Sharer-User-Id") Long bookerId,
+            @Valid @RequestBody BookingRequestDto newBookingRequestDto) {
+
         log.info("Запрос на создание: \"{}\" от пользователя с id: {}", newBookingRequestDto, bookerId);
         final BookingDto booking = bookingService.createBooking(bookerId, newBookingRequestDto);
         log.info("Создан: \"{}\"", booking);
@@ -38,9 +40,11 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     @Validated({Marker.OnUpdate.class})
     @ResponseStatus(HttpStatus.OK)
-    public BookingDto approvalBooking(@RequestHeader("X-Sharer-User-Id") Long ownerItemId,
-                                      @PathVariable @NotNull Long bookingId,
-                                      @RequestParam(value = "approved") @NotNull Boolean approved) {
+    public BookingDto approvalBooking(
+            @RequestHeader("X-Sharer-User-Id") Long ownerItemId,
+            @PathVariable @NotNull Long bookingId,
+            @RequestParam(value = "approved") @NotNull Boolean approved) {
+
         log.info("Обработка запроса на бронирование с id: {}, владелец вещи id: {}, подтверждение: {}",
                 bookingId, ownerItemId, approved);
         final BookingDto booking = bookingService.approvalBooking(ownerItemId, bookingId, approved);
@@ -51,8 +55,10 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
-    public BookingDto getBookingById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                     @PathVariable @NotNull Long bookingId) {
+    public BookingDto getBookingById(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @PathVariable @NotNull Long bookingId) {
+
         log.info("Запрос на получение информации о бронировании с id: {} от пользователя с id: {}", bookingId, userId);
         final BookingDto booking = bookingService.getBookingById(userId, bookingId);
         log.info("Информация о бронировании с id: {} передана пользователю с id: {}", bookingId, userId);
@@ -68,6 +74,7 @@ public class BookingController {
             @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
+
         log.info("Запрос на получение списка бронирований в состоянии: \"{}\" пользователя с id: {}\n" +
                         "Индекс первого элемента: {}. Количество элементов для отображения: {}",
                 state, bookerId, from, size);
@@ -87,6 +94,7 @@ public class BookingController {
             @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
+
         log.info("Запрос на получение списка бронирований в состоянии: \"{}\" вещей владельца с id: {}\n" +
                         "Индекс первого элемента: {}. Количество элементов для отображения: {}",
                 state, ownerItemId, from, size);

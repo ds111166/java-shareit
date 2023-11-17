@@ -20,17 +20,17 @@ import java.time.LocalDateTime;
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;              // уникальный идентификатор бронирования
+    private Long id;                // уникальный идентификатор бронирования
     @Column(name = "start_date", nullable = false)
-    private LocalDateTime start;  // дата начала бронирования
+    private LocalDateTime start;    // дата начала бронирования
     @Column(name = "end_date", nullable = false)
-    private LocalDateTime end;    // дата конца бронирования
+    private LocalDateTime end;      // дата конца бронирования
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
-    private Item item;            // вещь, которую пользователь бронирует
+    private Item item;              // вещь, которую пользователь бронирует
     @ManyToOne
     @JoinColumn(name = "booker_id", nullable = false)
-    private User booker;          // пользователь, который осуществляет бронирование
+    private User booker;            // пользователь, который осуществляет бронирование
     @Enumerated(EnumType.ORDINAL)
     private StatusBooking statusId; // статус бронирования
 }
