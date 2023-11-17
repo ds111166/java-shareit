@@ -16,3 +16,8 @@ Template repository for Shareit project.
 * **✓✓✓** `GET /items/search` -> `GET /items/search?from={from}&size={size}`
 * **✓✓✓** `GET /bookings` -> `GET /bookings?from={from}&size={size}`
 * **✓✓✓** `GET /bookings/owner` -> `GET /bookings/owner?from={from}&size={size}`
+## Добавить тесты
+* BookingControllerTest
+* ItemControllerTest
+* UserControllerTest
+* ItemRequestControllerTest

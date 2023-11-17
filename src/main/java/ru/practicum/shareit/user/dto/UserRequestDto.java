@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UseRequestDto {
+public class UserRequestDto {
     @NotNull(groups = Marker.OnCreate.class)
     private String name;    // имя или логин пользователя
     @NotNull(groups = Marker.OnCreate.class)

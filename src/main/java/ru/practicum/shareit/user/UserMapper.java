@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.user.dto.UseRequestDto;
+import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -25,7 +25,7 @@ public class UserMapper {
                 .build();
     }
 
-    public User toUser(UseRequestDto userDto) {
+    public User toUser(UserRequestDto userDto) {
 
         return User.builder()
                 .id(null)
