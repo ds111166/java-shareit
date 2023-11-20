@@ -21,3 +21,95 @@ Template repository for Shareit project.
 * ItemControllerTest
 * UserControllerTest
 * ItemRequestControllerTest
+```java
+/*@SpringBootTest
+@AutoConfigureMockMvc
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+//@WebMvcTest(controllers = UserController.class)
+class UserControllerTest {
+
+    private final MockMvc mockMvc;
+    private final ObjectMapper objectMapper;
+    private final UserService userService;
+
+    @Test
+    void getUsers() throws Exception {
+        List<UserResponseDto> users = userService.getUsers();
+        when(userService.getUsers())
+                .thenReturn(users);
+        mockMvc.perform(get("/users")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(users)));
+    }
+
+    @Test
+    void getUserById() throws Exception {
+        final UserResponseDto user = shouldCreateUser(UserRequestDto.builder()
+                .name("name1").email("email1@mail.com").build());
+        final Long userId = user.getId();
+        mockMvc.perform(get("/users/{id}", userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(user.getId()))
+                .andExpect(jsonPath("$.name").value(user.getName()))
+                .andExpect(jsonPath("$.email").value(user.getEmail()));
+        mockMvc.perform(get("/users/{id}", 99))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void createUserTest() throws Exception {
+        shouldCreateUser(UserRequestDto.builder().name("name1").email("email1@mail.com").build());
+        shouldNotCreateUserWithNullName();
+        shouldNotCreateUserWithWithAnIncorrectEmail();
+        shouldNotCreateUserWithNonUniqueEmail();
+    }
+
+    @Test
+    void updateUser() {
+    }
+
+    @Test
+    void deleteUser() {
+    }
+
+    private void shouldNotCreateUserWithNonUniqueEmail() throws Exception {
+        UserRequestDto newUser = UserRequestDto.builder().name("1name3").email("email1@mail.com").build();
+        final ResultActions resultActions = mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newUser)))
+                .andExpect(status().isConflict());
+    }
+
+    private void shouldNotCreateUserWithNullName() throws Exception {
+        UserRequestDto newUser = UserRequestDto.builder().email("email2@mail.com").build();
+        final ResultActions resultActions = mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newUser)))
+                .andExpect(status().isBadRequest());
+    }
+
+    private void shouldNotCreateUserWithWithAnIncorrectEmail() throws Exception {
+        UserRequestDto newUser = UserRequestDto.builder().name("name2").email("email1.mail.com").build();
+        final ResultActions resultActions = mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newUser)))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    private UserResponseDto shouldCreateUser(UserRequestDto newUser) throws Exception {
+
+        final ResultActions resultActions = mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newUser)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("name1"))
+                .andExpect(jsonPath("$.email").value("email1@mail.com"));
+        final MvcResult mvcResult = resultActions.andReturn();
+        String response = mvcResult.getResponse().getContentAsString();
+        final UserResponseDto createdUser = objectMapper.readValue(response, UserResponseDto.class);
+        resultActions.andExpect(jsonPath("$.id").value(createdUser.getId()));
+        return createdUser;
+    }
+}*/
+```

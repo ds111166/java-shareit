@@ -6,89 +6,95 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-class UserControllerTest {
+public class UserControllerTest {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final UserService userService;
+    @MockBean
+    private final UserService mockUserService;
+
+    private final UserResponseDto user = new UserResponseDto(1L, "user1", "user1@email.ru");
+    private final UserRequestDto userRequest = new UserRequestDto("user1", "user1@email.ru");
+    private final List<UserResponseDto> users = List.of(
+            new UserResponseDto(1L, "user1", "user1@email.ru"),
+            new UserResponseDto(2L, "user2", "user2@email.ru"),
+            new UserResponseDto(3L, "user3", "user3@email.ru"),
+            new UserResponseDto(4L, "user4", "user4@email.ru"));
 
     @Test
-    void getUsers() {
-    }
+    void createUser() throws Exception {
+        when(mockUserService.createUser(eq(userRequest)))
+                .thenReturn(user);
 
-    @Test
-    void getUserById() throws Exception {
-        final UserResponseDto user = shouldCreateUser();
-
-    }
-
-    @Test
-    void createUserTest() throws Exception {
-        shouldCreateUser();
-        shouldNotCreateUserWithNullName();
-        shouldNotCreateUserWithWithAnIncorrectEmail();
-        shouldNotCreateUserWithNonUniqueEmail();
-    }
-
-    @Test
-    void updateUser() {
-    }
-
-    @Test
-    void deleteUser() {
-    }
-
-    private void shouldNotCreateUserWithNonUniqueEmail() throws Exception {
-        UserRequestDto newUser = UserRequestDto.builder().name("1name3").email("email1@mail.com").build();
-        final ResultActions resultActions = mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newUser)))
-                .andExpect(status().isConflict());
-    }
-
-    private void shouldNotCreateUserWithNullName() throws Exception {
-        UserRequestDto newUser = UserRequestDto.builder().email("email2@mail.com").build();
-        final ResultActions resultActions = mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newUser)))
-                .andExpect(status().isBadRequest());
-    }
-
-    private void shouldNotCreateUserWithWithAnIncorrectEmail() throws Exception {
-        UserRequestDto newUser = UserRequestDto.builder().name("name2").email("email1.mail.com").build();
-        final ResultActions resultActions = mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newUser)))
-                .andExpect(status().isBadRequest());
-
-    }
-
-    private UserResponseDto shouldCreateUser() throws Exception {
-        UserRequestDto newUser = UserRequestDto.builder().name("name1").email("email1@mail.com").build();
-        final ResultActions resultActions = mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newUser)))
+        mockMvc.perform(post("/users")
+                        .content(objectMapper.writeValueAsString(user))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("name1"))
-                .andExpect(jsonPath("$.email").value("email1@mail.com"));
-        final MvcResult mvcResult = resultActions.andReturn();
-        String response = mvcResult.getResponse().getContentAsString();
-        final UserResponseDto createdUser = objectMapper.readValue(response, UserResponseDto.class);
-        resultActions.andExpect(jsonPath("$.id").value(createdUser.getId()));
-        return createdUser;
+                .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(user.getName())))
+                .andExpect(jsonPath("$.email", is(user.getEmail())));
+    }
+
+    @Test
+    void getUser() throws Exception {
+        when(mockUserService.getUserById(eq(1L)))
+                .thenReturn(user);
+
+        mockMvc.perform(get("/users/{id}", user.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(user.getName())))
+                .andExpect(jsonPath("$.email", is(user.getEmail())));
+    }
+
+    @Test
+    void deleteUser() throws Exception {
+        mockMvc.perform(delete("/users/{id}", user.getId()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getUsers() throws Exception {
+        when(mockUserService.getUsers())
+                .thenReturn(users);
+        mockMvc.perform(get("/users")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(content().json(objectMapper.writeValueAsString(users)));
+    }
+
+    @Test
+    void updateUser() throws Exception {
+        when(mockUserService.updateUser(eq(1L), eq(user)))
+                .thenReturn(user);
+
+        mockMvc.perform(patch("/users/{id}", user.getId())
+                        .content(objectMapper.writeValueAsString(user))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is(user.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(user.getName())))
+                .andExpect(jsonPath("$.email", is(user.getEmail())));
     }
 }
