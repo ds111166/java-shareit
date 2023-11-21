@@ -36,7 +36,6 @@ class BookingControllerTest {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final BookingMapper bookingMapper;
     @MockBean
     private final BookingService mockBookingService;
 

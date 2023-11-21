@@ -16,11 +16,20 @@ Template repository for Shareit project.
 * **✓✓✓** `GET /items/search` -> `GET /items/search?from={from}&size={size}`
 * **✓✓✓** `GET /bookings` -> `GET /bookings?from={from}&size={size}`
 * **✓✓✓** `GET /bookings/owner` -> `GET /bookings/owner?from={from}&size={size}`
-## Добавить тесты
-* BookingControllerTest
-* ItemControllerTest
-* UserControllerTest
-* ItemRequestControllerTest
+## Добавить тесты REST-эндпоинтов  - контроллеров
+* **✓✓** BookingControllerTest
+* **✓✓** ItemControllerTest
+* **✓✓** UserControllerTest
+* **✓✓** ItemRequestControllerTest
+## Добавить юнит-тесты для всего кода, содержащего логику - сервисов
+## Добавить интеграционные тесты, проверяющие взаимодействие с БД
+## Добавить тесты для слоя репозиториев с использованием аннотации `@DataJpaTest`.
+## Добавить тесты для работы с JSON для DTO содержащие логику с помощью аннотации `@JsonTest`
+* **✓✓** BookingRequestDto
+* **✓✓** CommentRequestDto
+* **✓✓** ItemCreateDto
+* **✓✓** ItemRequestCreateDto
+* **✓✓** UserRequestDto
 ```java
 /*@SpringBootTest
 @AutoConfigureMockMvc

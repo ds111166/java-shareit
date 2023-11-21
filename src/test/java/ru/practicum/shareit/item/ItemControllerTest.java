@@ -70,7 +70,6 @@ class ItemControllerTest {
 
     @Test
     void getItemById() throws Exception {
-        //getItemById(Long userId, Long itemId)
         when(mockItemService.getItemById(eq(1L), eq(1L)))
                 .thenReturn(item);
         mockMvc.perform(get("/items/{itemId}", item.getId())
@@ -85,7 +84,6 @@ class ItemControllerTest {
 
     @Test
     void createItem() throws Exception {
-        //createItem(Long ownerId, ItemCreateDto newItem);
         when(mockItemService.createItem(eq(1L), eq(itemCreate)))
                 .thenReturn(item);
         mockMvc.perform(post("/items")
@@ -101,7 +99,6 @@ class ItemControllerTest {
 
     @Test
     void updateItem() throws Exception {
-        //updateItem(Long ownerId, Long itemId, ItemResponseDto itemData);
         ItemResponseDto updatedItem = ItemResponseDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -128,7 +125,6 @@ class ItemControllerTest {
 
     @Test
     void searchItemsByText() throws Exception {
-        //List<ItemResponseDto> searchItemsByText(String text, @Min(0) Integer from, @Min(1) Integer size);
         when(mockItemService.searchItemsByText(eq("ipt"),
                 intThat(from -> from > -1), intThat(size -> size > 0)))
                 .thenReturn(List.of(item));
@@ -144,7 +140,6 @@ class ItemControllerTest {
 
     @Test
     void createComment() throws Exception {
-        //CommentResponseDto createComment(Long authorId, Long itemId, CommentRequestDto newComment);
         CommentRequestDto commentRequestDto = new CommentRequestDto("comment item");
         final LocalDateTime now = LocalDateTime.now();
         CommentResponseDto comment = CommentResponseDto.builder()
