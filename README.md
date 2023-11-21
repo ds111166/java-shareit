@@ -24,6 +24,14 @@ Template repository for Shareit project.
 ## Добавить юнит-тесты для всего кода, содержащего логику - сервисов
 ## Добавить интеграционные тесты, проверяющие взаимодействие с БД
 ## Добавить тесты для слоя репозиториев с использованием аннотации `@DataJpaTest`.
+* https://howtodoinjava.com/spring-boot2/testing/datajpatest-annotation/
+* https://www.baeldung.com/spring-boot-testing
+* https://www.bezkoder.com/spring-boot-unit-test-jpa-repo-datajpatest/
+* BookingRepository
+* CommentRepository
+* ItemRepository
+* ItemRequestRepository
+* **✓✓** UserRepository
 ## Добавить тесты для работы с JSON для DTO содержащие логику с помощью аннотации `@JsonTest`
 * **✓✓** BookingRequestDto
 * **✓✓** CommentRequestDto
