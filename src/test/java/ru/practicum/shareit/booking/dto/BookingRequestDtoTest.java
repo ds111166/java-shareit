@@ -25,7 +25,7 @@ class BookingRequestDtoTest {
     private BookingRequestDto bookingRequestDto;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         bookingRequestDto = BookingRequestDto.builder()
                 .itemId(2L)
                 .start(LocalDateTime.of(2100, 11, 11, 11, 11))

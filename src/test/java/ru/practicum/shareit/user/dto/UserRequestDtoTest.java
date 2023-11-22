@@ -26,7 +26,7 @@ class UserRequestDtoTest {
     private UserRequestDto userRequestDto;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         userRequestDto = UserRequestDto.builder()
                 .name("user")
                 .email("user.info@mail.ru")

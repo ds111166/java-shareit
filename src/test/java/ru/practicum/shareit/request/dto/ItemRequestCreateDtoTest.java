@@ -26,7 +26,7 @@ class ItemRequestCreateDtoTest {
     private ItemRequestCreateDto itemRequestCreateDto;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         itemRequestCreateDto = ItemRequestCreateDto.builder()
                 .description("ItemRequestCreateDto")
                 .build();

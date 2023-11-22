@@ -25,7 +25,7 @@ class CommentRequestDtoTest {
     private CommentRequestDto commentRequestDto;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         commentRequestDto = CommentRequestDto.builder()
                 .text("CommentRequestDtoTest")
                 .build();

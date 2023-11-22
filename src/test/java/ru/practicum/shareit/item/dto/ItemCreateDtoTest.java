@@ -26,7 +26,7 @@ class ItemCreateDtoTest {
     private ItemCreateDto itemCreateDto;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         itemCreateDto = ItemCreateDto.builder()
                 .name("item")
                 .description("description item")
