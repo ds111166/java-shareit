@@ -85,6 +85,7 @@ public class ItemController {
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
+    @Validated
     public List<ItemResponseDto> searchItemsByText(
             @RequestParam("text") String text,
             @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")

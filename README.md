@@ -23,6 +23,10 @@ Template repository for Shareit project.
 * **✓✓** ItemRequestControllerTest
 ## Добавить юнит-тесты для всего кода, содержащего логику - сервисов
 ## Добавить интеграционные тесты, проверяющие взаимодействие с БД
+* BookingServiceImplTest
+* ItemServiceImplTest
+* ItemRequestServiceImplTest
+* **✓✓** UserServiceImplTest
 ## Добавить тесты для слоя репозиториев с использованием аннотации `@DataJpaTest`.
 * https://howtodoinjava.com/spring-boot2/testing/datajpatest-annotation/
 * https://www.baeldung.com/spring-boot-testing

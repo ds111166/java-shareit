@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.data.StatusBooking;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -31,8 +32,9 @@ import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.ValidationException;
+import javax.validation.*;
 import javax.validation.constraints.Min;
+import javax.validation.metadata.ConstraintDescriptor;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,6 +52,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
     private final BookingMapper bookingMapper;
+    private final Validator validator;
 
     @Override
     @Transactional
@@ -127,6 +130,15 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public List<ItemResponseDto> searchItemsByText(String text, @Min(0) Integer from, @Min(1) Integer size) {
 
+        Set<ConstraintViolation<Object>> violations = validator.validate(from);
+
+        if (!violations.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (ConstraintViolation<Object> constraintViolation : violations) {
+                sb.append(constraintViolation.getMessage());
+            }
+            throw new ConstraintViolationException("Error occurred: " + sb.toString(), violations);
+        }
         if (text == null || text.isEmpty() || text.isBlank() || size == 0) {
             return new ArrayList<>();
         }
