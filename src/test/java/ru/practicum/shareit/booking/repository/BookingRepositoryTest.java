@@ -121,11 +121,11 @@ class BookingRepositoryTest {
     void findByBookerIdAndStartAfter() {
         final LocalDateTime now = LocalDateTime.now();
         Booking booking1 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
-                        item1, user4, StatusBooking.WAITING));
+                item1, user4, StatusBooking.WAITING));
         Booking booking2 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
-                        item2, user4, StatusBooking.WAITING));
+                item2, user4, StatusBooking.WAITING));
         Booking booking3 = em.persist(new Booking(null, now.plusHours(1L), now.plusDays(3L),
-                        item3, user4, StatusBooking.WAITING));
+                item3, user4, StatusBooking.WAITING));
         final List<Booking> byBookerIdAndStartAfter4 = bookingRepository
                 .findByBookerIdAndStartAfter(user4.getId(), now.plusHours(12L), null);
         assertThat(byBookerIdAndStartAfter4).hasSize(2).contains(booking1, booking2);
