@@ -138,7 +138,7 @@ public class ItemServiceImpl implements ItemService {
             for (ConstraintViolation<Object> constraintViolation : violations) {
                 sb.append(constraintViolation.getMessage());
             }
-            throw new ConstraintViolationException("Error occurred: " + sb.toString(), violations);
+            throw new ConstraintViolationException("Error occurred: " + sb, violations);
         }
         if (text == null || text.isEmpty() || text.isBlank() || size == 0) {
             return new ArrayList<>();

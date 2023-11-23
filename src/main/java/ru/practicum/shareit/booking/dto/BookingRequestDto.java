@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.validation.DataBookingValidate;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @DataBookingValidate
+@AllArgsConstructor
 public class BookingRequestDto {
     private Long itemId;
     @FutureOrPresent
