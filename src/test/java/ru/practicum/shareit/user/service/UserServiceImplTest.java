@@ -42,7 +42,8 @@ class UserServiceImplTest {
 
     @Test
     void getUserById() {
-        final UserResponseDto userDto = userService.createUser(new UserRequestDto("user2", "user2@mail.ru"));
+        final UserResponseDto userDto = userService
+                .createUser(new UserRequestDto("user2", "user2@mail.ru"));
         final UserResponseDto userById = userService.getUserById(userDto.getId());
         assertThat(userById).isEqualTo(userDto);
         assertThrows(NotFoundException.class, () -> {

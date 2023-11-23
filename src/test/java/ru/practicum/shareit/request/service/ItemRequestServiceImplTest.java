@@ -35,12 +35,13 @@ class ItemRequestServiceImplTest {
     void createItemRequest() {
         final UserResponseDto requestor = userService
                 .createUser(new UserRequestDto("requestor", "requestor@mail.ru"));
-        ItemRequestResponseDto createdItemRequest = itemRequestService.
-                createItemRequest(requestor.getId(), new ItemRequestCreateDto("дрель"));
+        ItemRequestResponseDto createdItemRequest = itemRequestService
+                .createItemRequest(requestor.getId(), new ItemRequestCreateDto("дрель"));
         final TypedQuery<ItemRequest> query = em.createQuery("Select ir from ItemRequest ir where ir.id = :id",
                 ItemRequest.class);
         ItemRequest itemRequest = query.setParameter("id", createdItemRequest.getId()).getSingleResult();
-        ItemRequestResponseDto itemRequestResponseDto = itemRequestMapper.toItemRequestResponseDto(itemRequest, requestor);
+        ItemRequestResponseDto itemRequestResponseDto = itemRequestMapper
+                .toItemRequestResponseDto(itemRequest, requestor);
         assertThat(itemRequestResponseDto.getId()).isEqualTo(createdItemRequest.getId());
         assertThat(itemRequestResponseDto.getRequestor()).isEqualTo(createdItemRequest.getRequestor());
         assertThat(itemRequestResponseDto.getCreated()).isEqualTo(createdItemRequest.getCreated());
@@ -50,10 +51,10 @@ class ItemRequestServiceImplTest {
     void getItemRequestById() {
         final UserResponseDto requestor = userService
                 .createUser(new UserRequestDto("requestor", "requestor@mail.ru"));
-        ItemRequestResponseDto createdItemRequest = itemRequestService.
-                createItemRequest(requestor.getId(), new ItemRequestCreateDto("дрель"));
-        ItemRequestResponseDto itemRequestById = itemRequestService.
-                getItemRequestById(requestor.getId(), createdItemRequest.getId());
+        ItemRequestResponseDto createdItemRequest = itemRequestService
+                .createItemRequest(requestor.getId(), new ItemRequestCreateDto("дрель"));
+        ItemRequestResponseDto itemRequestById = itemRequestService
+                .getItemRequestById(requestor.getId(), createdItemRequest.getId());
         assertThat(itemRequestById).isEqualTo(createdItemRequest);
     }
 
@@ -61,8 +62,8 @@ class ItemRequestServiceImplTest {
     void getItemRequests() {
         final UserResponseDto requestor = userService
                 .createUser(new UserRequestDto("requestor", "requestor@mail.ru"));
-        ItemRequestResponseDto createdItemRequest = itemRequestService.
-                createItemRequest(requestor.getId(), new ItemRequestCreateDto("дрель"));
+        ItemRequestResponseDto createdItemRequest = itemRequestService
+                .createItemRequest(requestor.getId(), new ItemRequestCreateDto("дрель"));
         List<ItemRequestResponseDto> itemRequests = itemRequestService.getItemRequests(requestor.getId());
         assertThat(itemRequests).hasSize(1).contains(createdItemRequest);
     }
@@ -74,12 +75,12 @@ class ItemRequestServiceImplTest {
         final UserResponseDto requestor2 = userService
                 .createUser(new UserRequestDto("requestor2", "requestor2@mail.ru"));
 
-        ItemRequestResponseDto itemRequest1 = itemRequestService.
-                createItemRequest(requestor1.getId(), new ItemRequestCreateDto("дрель"));
-        ItemRequestResponseDto itemRequest21 = itemRequestService.
-                createItemRequest(requestor2.getId(), new ItemRequestCreateDto("дрель"));
-        ItemRequestResponseDto itemRequest22 = itemRequestService.
-                createItemRequest(requestor2.getId(), new ItemRequestCreateDto("дрель"));
+        ItemRequestResponseDto itemRequest1 = itemRequestService
+                .createItemRequest(requestor1.getId(), new ItemRequestCreateDto("дрель"));
+        ItemRequestResponseDto itemRequest21 = itemRequestService
+                .createItemRequest(requestor2.getId(), new ItemRequestCreateDto("дрель"));
+        ItemRequestResponseDto itemRequest22 = itemRequestService
+                .createItemRequest(requestor2.getId(), new ItemRequestCreateDto("дрель"));
         List<ItemRequestResponseDto> itemRequestsAll = itemRequestService
                 .getItemRequestsAll(requestor1.getId(), 0, 100);
         assertThat(itemRequestsAll).hasSize(2).containsAll(List.of(itemRequest21, itemRequest22));

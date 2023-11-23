@@ -65,8 +65,8 @@ class ItemCreateDtoTest {
     void whenItemCreateDtoDescriptionIsBlankThenViolationsNotNull() {
         assertThat(validator.validate(itemCreateDto)).isEmpty();
         itemCreateDto.setDescription(" ");
-        Set<ConstraintViolation<ItemCreateDto>> violations = validator.validate(itemCreateDto,
-                Marker.OnCreate.class);
+        Set<ConstraintViolation<ItemCreateDto>> violations = validator
+                .validate(itemCreateDto, Marker.OnCreate.class);
         assertThat(violations.size()).isEqualTo(1);
         violations.forEach(action -> {
             assertThat(action.getMessage())
@@ -79,8 +79,8 @@ class ItemCreateDtoTest {
     void whenItemCreateDtoAvailableIsNullThenViolationsNotNull() {
         assertThat(validator.validate(itemCreateDto)).isEmpty();
         itemCreateDto.setAvailable(null);
-        Set<ConstraintViolation<ItemCreateDto>> violations = validator.validate(itemCreateDto,
-                Marker.OnCreate.class);
+        Set<ConstraintViolation<ItemCreateDto>> violations = validator
+                .validate(itemCreateDto, Marker.OnCreate.class);
         assertThat(violations.size()).isEqualTo(1);
         violations.forEach(action -> {
             assertThat(action.getMessage())

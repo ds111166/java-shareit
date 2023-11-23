@@ -125,7 +125,8 @@ class ItemServiceImplTest {
         assertThat(updatedItem.getId()).isEqualTo(createdItem.getId());
         assertThat(updatedItem.getDescription()).isEqualTo("des_item_update");
 
-        assertThrows(ForbiddenException.class, () -> itemService.updateItem(userDto2.getId(), createdItem.getId(), createdItem));
+        assertThrows(ForbiddenException.class, () -> itemService
+                .updateItem(userDto2.getId(), createdItem.getId(), createdItem));
 
     }
 
@@ -155,20 +156,20 @@ class ItemServiceImplTest {
         final UserResponseDto bookerDto = userService.createUser(bookerRequestDto);
         final ItemResponseDto itemDto1 = itemService.createItem(ownerDto1.getId(), itemCreateDto1);
 
-        assertThrows(ValidationException.class, () -> itemService.createComment(ownerDto1.getId(),
-                itemDto1.getId(), new CommentRequestDto("красота")));
+        assertThrows(ValidationException.class, () -> itemService
+                .createComment(ownerDto1.getId(),itemDto1.getId(), new CommentRequestDto("красота")));
 
         final BookingRequestDto bookingRequestDto1 = new BookingRequestDto(itemDto1.getId(),
                 now.minusDays(11L), now.minusDays(5L));
         final User owner1 = userMapper.toUser(ownerDto1);
         final User booker = userMapper.toUser(bookerDto);
-        Booking booking1 = bookingMapper.toBooking(bookingRequestDto1,
-                itemMapper.toItem(itemDto1, owner1), booker, StatusBooking.APPROVED);
+        Booking booking1 = bookingMapper
+                .toBooking(bookingRequestDto1, itemMapper.toItem(itemDto1, owner1), booker, StatusBooking.APPROVED);
         em.persist(booking1);
         em.flush();
 
-        final CommentResponseDto commentDto = itemService.createComment(bookerDto.getId(),
-                itemDto1.getId(), new CommentRequestDto("красота"));
+        final CommentResponseDto commentDto = itemService
+                .createComment(bookerDto.getId(), itemDto1.getId(), new CommentRequestDto("красота"));
         assertThat(commentDto.getText()).isEqualTo("красота");
         final ItemResponseDto itemById = itemService.getItemById(owner1.getId(), itemDto1.getId());
         assertThat(itemById.getComments()).hasSize(1);
@@ -180,8 +181,8 @@ class ItemServiceImplTest {
 
         final UserResponseDto requestor12 = userService
                 .createUser(new UserRequestDto("requestor", "requestor@mail.ru"));
-        ItemRequestResponseDto itemRequest = itemRequestService.
-                createItemRequest(requestor12.getId(), new ItemRequestCreateDto("дрель"));
+        ItemRequestResponseDto itemRequest = itemRequestService
+                .createItemRequest(requestor12.getId(), new ItemRequestCreateDto("дрель"));
         ItemCreateDto itemCreateDto1 = new ItemCreateDto("шуруповерт",
                 "шуруповерт, дрель", true, itemRequest.getId());
 

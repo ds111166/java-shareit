@@ -11,7 +11,7 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByBookerId(Long bookerId, Pageable pageableSorted);
 
-    List<Booking> findByBookerIdAndStartLessThanAndEndGreaterThanEqual(Long BookerId,
+    List<Booking> findByBookerIdAndStartLessThanAndEndGreaterThanEqual(Long bookerId,
                                                                        LocalDateTime nowDateTime,
                                                                        LocalDateTime nowDateTime1,
                                                                        Pageable pageableSorted);

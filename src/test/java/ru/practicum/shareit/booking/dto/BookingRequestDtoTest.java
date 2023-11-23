@@ -69,7 +69,8 @@ class BookingRequestDtoTest {
         bookingRequestDto.setStart(now.minusSeconds(1L));
         Set<ConstraintViolation<BookingRequestDto>> violations = validator.validate(bookingRequestDto);
         assertThat(violations).isNotEmpty();
-        assertThat(violations.toString()).contains("должно содержать сегодняшнее число или дату, которая еще не наступила");
+        assertThat(violations.toString())
+                .contains("должно содержать сегодняшнее число или дату, которая еще не наступила");
     }
 
     @Test

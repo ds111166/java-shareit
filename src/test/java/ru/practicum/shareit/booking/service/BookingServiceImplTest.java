@@ -47,8 +47,10 @@ class BookingServiceImplTest {
     @Test
     void createBooking() {
         final LocalDateTime now = LocalDateTime.now();
-        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item1", "des_item1", true, null);
-        ItemCreateDto itemCreateDto2 = new ItemCreateDto("item2", "des_item2", false, null);
+        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item1", "des_item1",
+                true, null);
+        ItemCreateDto itemCreateDto2 = new ItemCreateDto("item2", "des_item2",
+                false, null);
         UserRequestDto ownerRequestDto1 = new UserRequestDto("owner1", "owner1@mail.ru");
         UserRequestDto bookerRequestDto = new UserRequestDto("booker", "booker@mail.ru");
         final UserResponseDto owner1 = userService.createUser(ownerRequestDto1);
@@ -66,14 +68,16 @@ class BookingServiceImplTest {
 
         final BookingRequestDto bookingRequestDto2 = new BookingRequestDto(item2.getId(),
                 now.plusDays(1L), now.plusDays(2L));
-        assertThrows(ValidationException.class, () -> bookingService.createBooking(booker.getId(), bookingRequestDto2));
+        assertThrows(ValidationException.class, () -> bookingService
+                .createBooking(booker.getId(), bookingRequestDto2));
 
     }
 
     @Test
     void getBookingById() {
         final LocalDateTime now = LocalDateTime.now();
-        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item", "des_item", true, null);
+        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item", "des_item",
+                true, null);
         UserRequestDto ownerRequestDto1 = new UserRequestDto("owner1", "owner1@mail.ru");
         UserRequestDto bookerRequestDto = new UserRequestDto("booker", "booker@mail.ru");
         final UserResponseDto owner1 = userService.createUser(ownerRequestDto1);
@@ -89,7 +93,8 @@ class BookingServiceImplTest {
     @Test
     void approvalBooking() {
         final LocalDateTime now = LocalDateTime.now();
-        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item", "des_item", true, null);
+        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item", "des_item",
+                true, null);
         UserRequestDto ownerRequestDto1 = new UserRequestDto("owner1", "owner1@mail.ru");
         UserRequestDto bookerRequestDto = new UserRequestDto("booker", "booker@mail.ru");
         final UserResponseDto owner1 = userService.createUser(ownerRequestDto1);
@@ -119,7 +124,8 @@ class BookingServiceImplTest {
     @Test
     void getBookings() {
         final LocalDateTime now = LocalDateTime.now();
-        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item", "des_item", true, null);
+        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item", "des_item",
+                true, null);
         UserRequestDto ownerRequestDto1 = new UserRequestDto("owner1", "owner1@mail.ru");
         UserRequestDto bookerRequestDto = new UserRequestDto("booker", "booker@mail.ru");
         final UserResponseDto ownerDto1 = userService.createUser(ownerRequestDto1);
@@ -152,7 +158,8 @@ class BookingServiceImplTest {
 
         createdBooking3 = bookingService.approvalBooking(ownerDto1.getId(), createdBooking3.getId(), false);
 
-        assertThrows(ValidationException.class, () -> bookingService.getBookings(bookerDto.getId(), "qwerty", 0, 2222));
+        assertThrows(ValidationException.class, () -> bookingService
+                .getBookings(bookerDto.getId(), "qwerty", 0, 2222));
         final List<BookingDto> bookingsAll = bookingService
                 .getBookings(bookerDto.getId(), "ALL", 0, 10);
         assertThat(bookingsAll).hasSize(4)
@@ -182,7 +189,8 @@ class BookingServiceImplTest {
     @Test
     void getBookingsByOwnerItemId() {
         final LocalDateTime now = LocalDateTime.now();
-        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item", "des_item", true, null);
+        ItemCreateDto itemCreateDto1 = new ItemCreateDto("item", "des_item",
+                true, null);
         UserRequestDto ownerRequestDto1 = new UserRequestDto("owner1", "owner1@mail.ru");
         UserRequestDto bookerRequestDto = new UserRequestDto("booker", "booker@mail.ru");
         final UserResponseDto ownerDto1 = userService.createUser(ownerRequestDto1);
@@ -215,7 +223,8 @@ class BookingServiceImplTest {
 
         createdBooking3 = bookingService.approvalBooking(ownerDto1.getId(), createdBooking3.getId(), false);
 
-        assertThrows(ValidationException.class, () -> bookingService.getBookingsByOwnerItemId(ownerDto1.getId(), "qwerty", 0, 2222));
+        assertThrows(ValidationException.class, () -> bookingService
+                .getBookingsByOwnerItemId(ownerDto1.getId(), "qwerty", 0, 2222));
         final List<BookingDto> bookingsAll = bookingService
                 .getBookingsByOwnerItemId(ownerDto1.getId(), "ALL", 0, 10);
         assertThat(bookingsAll).hasSize(4)

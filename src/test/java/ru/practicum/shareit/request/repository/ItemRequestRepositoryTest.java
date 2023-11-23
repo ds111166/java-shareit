@@ -62,9 +62,11 @@ class ItemRequestRepositoryTest {
         final List<ItemRequest> itemRequestsAll = itemRequestRepository.findAll();
         assertThat(itemRequestsAll).hasSize(5).contains(itemRequest1, itemRequest2,
                 itemRequest3, itemRequest4, itemRequest5);
-        final List<ItemRequest> byRequestor3 = itemRequestRepository.findByRequestorIdOrderByCreatedDesc(user3.getId());
+        final List<ItemRequest> byRequestor3 = itemRequestRepository
+                .findByRequestorIdOrderByCreatedDesc(user3.getId());
         assertThat(byRequestor3).isEmpty();
-        final List<ItemRequest> byRequestor1 = itemRequestRepository.findByRequestorIdOrderByCreatedDesc(user1.getId());
+        final List<ItemRequest> byRequestor1 = itemRequestRepository
+                .findByRequestorIdOrderByCreatedDesc(user1.getId());
         assertThat(byRequestor1).hasSize(2).contains(itemRequest2, itemRequest3);
         assertThat(byRequestor1.get(0)).isEqualTo(itemRequest3);
         assertThat(byRequestor1.get(1)).isEqualTo(itemRequest2);
