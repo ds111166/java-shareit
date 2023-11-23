@@ -98,6 +98,13 @@ class BookingRepositoryTest {
                 .findByBookerIdAndStartLessThanAndEndGreaterThanEqual(user1.getId(), now.plusDays(1L).plusMinutes(2L),
                         now.plusDays(2L).plusHours(12L), null);
         assertThat(byBookerIdAndStartLessThanAndEndGreaterThanEqual1).isEmpty();
+
+        final List<Booking> byBookerIdAndStartLessThanAndEndGreaterThanEqual = bookingRepository
+                .findByBookerIdAndStartLessThanAndEndGreaterThanEqual(user4.getId(), now.plusDays(1L).plusMinutes(2L),
+                        now.plusDays(1L), null);
+        assertThat(byBookerIdAndStartLessThanAndEndGreaterThanEqual)
+                .hasSize(3).contains(booking1, booking2, booking3);
+
     }
 
     @Test
@@ -112,6 +119,7 @@ class BookingRepositoryTest {
         final List<Booking> byBookerIdAndEndBefore4 = bookingRepository
                 .findByBookerIdAndEndBefore(user4.getId(), now.plusDays(2L).plusHours(12L), null);
         assertThat(byBookerIdAndEndBefore4).hasSize(2).contains(booking1, booking2);
+        assertThat(byBookerIdAndEndBefore4).doesNotContainAnyElementsOf(List.of(booking3));
         final List<Booking> byBookerIdAndEndBefore1 = bookingRepository
                 .findByBookerIdAndEndBefore(user1.getId(), now.plusDays(2L).plusHours(12L), null);
         assertThat(byBookerIdAndEndBefore1).isEmpty();
@@ -129,6 +137,7 @@ class BookingRepositoryTest {
         final List<Booking> byBookerIdAndStartAfter4 = bookingRepository
                 .findByBookerIdAndStartAfter(user4.getId(), now.plusHours(12L), null);
         assertThat(byBookerIdAndStartAfter4).hasSize(2).contains(booking1, booking2);
+        assertThat(byBookerIdAndStartAfter4).doesNotContainAnyElementsOf(List.of(booking3));
         final List<Booking> byBookerIdAndStartAfter1 = bookingRepository
                 .findByBookerIdAndStartAfter(user1.getId(), now.plusHours(12L), null);
         assertThat(byBookerIdAndStartAfter1).isEmpty();
@@ -148,7 +157,10 @@ class BookingRepositoryTest {
         assertThat(byBookerIdAndStatusId2).isEmpty();
         final List<Booking> byBookerIdAndStatusId4 = bookingRepository.findByBookerIdAndStatusId(user4.getId(),
                 StatusBooking.WAITING, null);
-        assertThat(byBookerIdAndStatusId4).hasSize(2).contains(booking2, booking3);
+        assertThat(byBookerIdAndStatusId4).hasSize(2)
+                .contains(booking2, booking3)
+                .doesNotContainAnyElementsOf(List.of(booking1));
+
     }
 
     @Test
@@ -182,6 +194,14 @@ class BookingRepositoryTest {
                         null);
         assertThat(byItemOwnerIdAndStartLessThanAndEndGreaterThanEqual1).hasSize(1).contains(booking3);
 
+        final List<Booking> byItemOwnerIdAndStartLessThanAndEndGreaterThanEqual2 = bookingRepository
+                .findByItem_Owner_IdAndStartLessThanAndEndGreaterThanEqual(user1.getId(),
+                        now.plusDays(1L).plusMinutes(2L),
+                        now.plusDays(1L).plusHours(12L),
+                        null);
+        assertThat(byItemOwnerIdAndStartLessThanAndEndGreaterThanEqual2).hasSize(3)
+                .containsAll(List.of(booking1, booking2, booking3));
+
         final List<Booking> byItemOwnerIdAndStartLessThanAndEndGreaterThanEqual4 = bookingRepository
                 .findByItem_Owner_IdAndStartLessThanAndEndGreaterThanEqual(user4.getId(),
                         now.plusDays(1L).plusMinutes(2L),
@@ -202,9 +222,14 @@ class BookingRepositoryTest {
         final List<Booking> byItemOwnerIdAndEndBefore1 = bookingRepository
                 .findByItem_Owner_IdAndEndBefore(user1.getId(), now.plusDays(2L).plusHours(12L), null);
         assertThat(byItemOwnerIdAndEndBefore1).hasSize(2).contains(booking1, booking2);
+
         final List<Booking> byItemOwnerIdAndEndBefore4 = bookingRepository
                 .findByItem_Owner_IdAndEndBefore(user4.getId(), now.plusDays(2L).plusHours(12L), null);
         assertThat(byItemOwnerIdAndEndBefore4).isEmpty();
+
+        final List<Booking> byItemOwnerIdAndEndBefore2 = bookingRepository
+                .findByItem_Owner_IdAndEndBefore(user1.getId(), now.plusDays(3L).plusHours(12L), null);
+        assertThat(byItemOwnerIdAndEndBefore2).hasSize(3).contains(booking1, booking2, booking3);
     }
 
     @Test
@@ -214,7 +239,7 @@ class BookingRepositoryTest {
                 item1, user4, StatusBooking.WAITING));
         Booking booking2 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
                 item2, user4, StatusBooking.WAITING));
-        Booking booking3 = em.persist(new Booking(null, now.plusHours(1L), now.plusDays(3L),
+        em.persist(new Booking(null, now.plusHours(1L), now.plusDays(3L),
                 item3, user4, StatusBooking.WAITING));
         final List<Booking> byItemOwnerIdAndStartAfter1 = bookingRepository
                 .findByItem_Owner_IdAndStartAfter(user1.getId(), now.plusHours(12L), null);
@@ -227,7 +252,7 @@ class BookingRepositoryTest {
     @Test
     void findByItem_Owner_IdAndStatusId() {
         final LocalDateTime now = LocalDateTime.now();
-        Booking booking1 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
+        em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
                 item1, user4, StatusBooking.APPROVED));
         Booking booking2 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
                 item2, user4, StatusBooking.WAITING));
@@ -246,9 +271,9 @@ class BookingRepositoryTest {
         final LocalDateTime now = LocalDateTime.now();
         Booking booking1 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
                 item1, user4, StatusBooking.APPROVED));
-        Booking booking2 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
+        em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
                 item2, user4, StatusBooking.WAITING));
-        Booking booking3 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
+        em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
                 item3, user4, StatusBooking.WAITING));
         final Booking booking = bookingRepository
                 .findFirstByItemIdAndStatusIdAndStartBeforeOrderByEndDesc(item1.getId(), StatusBooking.APPROVED,
@@ -265,9 +290,9 @@ class BookingRepositoryTest {
         final LocalDateTime now = LocalDateTime.now();
         Booking booking1 = em.persist(new Booking(null, now.plusDays(1L).plusMinutes(1L), now.plusDays(2L),
                 item1, user4, StatusBooking.APPROVED));
-        Booking booking2 = em.persist(new Booking(null, now.plusDays(1L).plusMinutes(2L), now.plusDays(2L),
+        em.persist(new Booking(null, now.plusDays(1L).plusMinutes(2L), now.plusDays(2L),
                 item1, user3, StatusBooking.APPROVED));
-        Booking booking3 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
+        em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L),
                 item3, user4, StatusBooking.WAITING));
         final Booking booking = bookingRepository
                 .findFirstByItemIdAndStatusIdInAndStartAfterOrderByStartAsc(item1.getId(),
@@ -282,11 +307,11 @@ class BookingRepositoryTest {
     @Test
     void existsByItemIdAndBookerIdAndEndIsBeforeAndStatusId() {
         final LocalDateTime now = LocalDateTime.now();
-        Booking booking1 = em.persist(new Booking(null, now.plusDays(1L).plusMinutes(1L), now.plusDays(2L),
+        em.persist(new Booking(null, now.plusDays(1L).plusMinutes(1L), now.plusDays(2L),
                 item1, user4, StatusBooking.APPROVED));
-        Booking booking2 = em.persist(new Booking(null, now.plusDays(1L).plusMinutes(2L), now.plusDays(2L),
+        em.persist(new Booking(null, now.plusDays(1L).plusMinutes(2L), now.plusDays(2L),
                 item1, user3, StatusBooking.APPROVED));
-        Booking booking3 = em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L), item3,
+        em.persist(new Booking(null, now.plusDays(1L), now.plusDays(2L), item3,
                 user4, StatusBooking.WAITING));
         final boolean isExists = bookingRepository
                 .existsByItemIdAndBookerIdAndEndIsBeforeAndStatusId(item1.getId(), user4.getId(),
