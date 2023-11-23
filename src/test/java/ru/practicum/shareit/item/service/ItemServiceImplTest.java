@@ -157,7 +157,7 @@ class ItemServiceImplTest {
         final ItemResponseDto itemDto1 = itemService.createItem(ownerDto1.getId(), itemCreateDto1);
 
         assertThrows(ValidationException.class, () -> itemService
-                .createComment(ownerDto1.getId(),itemDto1.getId(), new CommentRequestDto("красота")));
+                .createComment(ownerDto1.getId(), itemDto1.getId(), new CommentRequestDto("красота")));
 
         final BookingRequestDto bookingRequestDto1 = new BookingRequestDto(itemDto1.getId(),
                 now.minusDays(11L), now.minusDays(5L));

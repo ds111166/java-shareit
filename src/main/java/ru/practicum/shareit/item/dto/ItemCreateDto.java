@@ -18,7 +18,7 @@ public class ItemCreateDto {
     private String name;        // краткое название
     @NotBlank(groups = Marker.OnCreate.class, message = "Описание вещи не может быть пустым")
     private String description; // развёрнутое описание
-    @NotNull(groups = Marker.OnCreate.class,  message = "не должно равняться null")
+    @NotNull(groups = Marker.OnCreate.class, message = "не должно равняться null")
     private Boolean available;  // статус о том, доступна или нет вещь для аренды
     private Long requestId;     //  если вещь была создана по запросу - идентификатор соответствующего запроса
 }

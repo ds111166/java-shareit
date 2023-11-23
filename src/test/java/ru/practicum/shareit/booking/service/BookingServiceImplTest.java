@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.data.StatusBooking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
@@ -60,6 +61,9 @@ class BookingServiceImplTest {
 
         final BookingRequestDto bookingRequestDto1 = new BookingRequestDto(item1.getId(),
                 now.plusDays(1L), now.plusDays(2L));
+        assertThrows(NotFoundException.class, () -> bookingService
+                .createBooking(owner1.getId(), bookingRequestDto1));
+
         final BookingDto createdBooking1 = bookingService.createBooking(booker.getId(), bookingRequestDto1);
         final TypedQuery<Booking> query = em.createQuery("Select b from  Booking b where b.id = :id", Booking.class);
         final Booking booking = query.setParameter("id", createdBooking1.getId()).getSingleResult();
@@ -80,14 +84,19 @@ class BookingServiceImplTest {
                 true, null);
         UserRequestDto ownerRequestDto1 = new UserRequestDto("owner1", "owner1@mail.ru");
         UserRequestDto bookerRequestDto = new UserRequestDto("booker", "booker@mail.ru");
+        UserRequestDto userRequestDto = new UserRequestDto("user", "user@mail.ru");
         final UserResponseDto owner1 = userService.createUser(ownerRequestDto1);
         final UserResponseDto booker = userService.createUser(bookerRequestDto);
+        final UserResponseDto user = userService.createUser(userRequestDto);
         final ItemResponseDto item1 = itemService.createItem(owner1.getId(), itemCreateDto1);
         final BookingRequestDto bookingRequestDto = new BookingRequestDto(item1.getId(),
                 now.plusDays(1L), now.plusDays(2L));
         final BookingDto createdBooking = bookingService.createBooking(booker.getId(), bookingRequestDto);
         final BookingDto bookingById = bookingService.getBookingById(booker.getId(), createdBooking.getId());
         assertThat(bookingById).isEqualTo(createdBooking);
+
+        assertThrows(NotFoundException.class, () -> bookingService
+                .getBookingById(user.getId(), createdBooking.getId()));
     }
 
     @Test

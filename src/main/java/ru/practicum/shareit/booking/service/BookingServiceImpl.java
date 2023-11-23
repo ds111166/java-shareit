@@ -26,7 +26,6 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.validation.ValidationException;
 import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,9 +119,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public List<BookingDto> getBookings(Long bookerId, String state, @Min(0) Integer from, @Min(1) Integer size) {
         userService.getUserById(bookerId);
-        if (size == 0) {
-            return new ArrayList<>();
-        }
+
         List<Booking> bookings;
         final Sort sorting = Sort.by(Sort.Order.desc("start"));
         final Pageable sortedByStart = PageRequest.of(from / size, size, sorting);
