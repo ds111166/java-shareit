@@ -15,9 +15,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserRequestDto {
-    @NotNull(groups = Marker.OnCreate.class)
+    @NotNull(groups = Marker.OnCreate.class, message= "не должно равняться null")
     private String name;    // имя или логин пользователя
-    @NotNull(groups = Marker.OnCreate.class)
+    @NotNull(groups = Marker.OnCreate.class, message= "не должно равняться null")
     @NotBlank(groups = Marker.OnCreate.class, message = "Адрес электронной почты не может быть пустой")
     @Email(groups = Marker.OnCreate.class, message = "Адрес электронной почты не верного формата")
     private String email;   // адрес электронной почты

@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookingRequestDto {
     private Long itemId;
-    @FutureOrPresent
-    @NotNull
+    @FutureOrPresent(message = "должно содержать сегодняшнее число или дату, которая еще не наступила")
+    @NotNull(message= "не должно равняться null")
     private LocalDateTime start;
-    @Future
-    @NotNull
+    @Future(message = "должно содержать дату, которая еще не наступила")
+    @NotNull(message= "не должно равняться null")
     private LocalDateTime end;
 
 }

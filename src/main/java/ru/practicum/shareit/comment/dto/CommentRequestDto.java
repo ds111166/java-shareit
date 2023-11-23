@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentRequestDto {
-    @NotNull(groups = Marker.OnCreate.class)
+    @NotNull(groups = Marker.OnCreate.class, message= "не должно равняться null")
     @NotBlank(groups = Marker.OnCreate.class, message = "текст комментария не может быть пустым")
     private String text;             // текст комментария
 }
