@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemRequestCreateDto {
-    @NotNull(groups = Marker.OnCreate.class)
+    @NotNull(groups = Marker.OnCreate.class,  message = "не должно равняться null")
     @NotBlank(groups = Marker.OnCreate.class, message = "описание вещи в запросе не может быть пустым")
     private String description;       // текст запроса, содержащий описание требуемой вещи
 }
