@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,10 +44,6 @@ class BookingServiceImplTest {
     private final UserMapper userMapper;
     private final ItemMapper itemMapper;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @Test
     void createBooking() {
         final LocalDateTime now = LocalDateTime.now();
@@ -71,9 +66,7 @@ class BookingServiceImplTest {
 
         final BookingRequestDto bookingRequestDto2 = new BookingRequestDto(item2.getId(),
                 now.plusDays(1L), now.plusDays(2L));
-        assertThrows(ValidationException.class, () -> {
-            bookingService.createBooking(booker.getId(), bookingRequestDto2);
-        });
+        assertThrows(ValidationException.class, () -> bookingService.createBooking(booker.getId(), bookingRequestDto2));
 
     }
 
@@ -159,9 +152,7 @@ class BookingServiceImplTest {
 
         createdBooking3 = bookingService.approvalBooking(ownerDto1.getId(), createdBooking3.getId(), false);
 
-        assertThrows(ValidationException.class, () -> {
-            bookingService.getBookings(bookerDto.getId(), "qwerty", 0, 2222);
-        });
+        assertThrows(ValidationException.class, () -> bookingService.getBookings(bookerDto.getId(), "qwerty", 0, 2222));
         final List<BookingDto> bookingsAll = bookingService
                 .getBookings(bookerDto.getId(), "ALL", 0, 10);
         assertThat(bookingsAll).hasSize(4)
@@ -224,9 +215,7 @@ class BookingServiceImplTest {
 
         createdBooking3 = bookingService.approvalBooking(ownerDto1.getId(), createdBooking3.getId(), false);
 
-        assertThrows(ValidationException.class, () -> {
-            bookingService.getBookingsByOwnerItemId(ownerDto1.getId(), "qwerty", 0, 2222);
-        });
+        assertThrows(ValidationException.class, () -> bookingService.getBookingsByOwnerItemId(ownerDto1.getId(), "qwerty", 0, 2222));
         final List<BookingDto> bookingsAll = bookingService
                 .getBookingsByOwnerItemId(ownerDto1.getId(), "ALL", 0, 10);
         assertThat(bookingsAll).hasSize(4)

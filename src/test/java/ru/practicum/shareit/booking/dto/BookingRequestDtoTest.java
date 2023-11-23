@@ -33,14 +33,16 @@ class BookingRequestDtoTest {
                 .build();
     }
 
-
     @Test
     void testJsonBookingRequestDto() throws Exception {
         assertThat(validator.validate(bookingRequestDto)).isEmpty();
         final JsonContent<BookingRequestDto> jsonContent = jacksonTester.write(bookingRequestDto);
-        assertThat(jsonContent).extractingJsonPathNumberValue("$.itemId").isEqualTo(2);
-        assertThat(jsonContent).extractingJsonPathStringValue("$.start").isEqualTo("2100-11-11T11:11:00");
-        assertThat(jsonContent).extractingJsonPathStringValue("$.end").isEqualTo("2100-12-12T12:12:00");
+        assertThat(jsonContent).extractingJsonPathNumberValue("$.itemId")
+                .isEqualTo(2);
+        assertThat(jsonContent).extractingJsonPathStringValue("$.start")
+                .isEqualTo("2100-11-11T11:11:00");
+        assertThat(jsonContent).extractingJsonPathStringValue("$.end")
+                .isEqualTo("2100-12-12T12:12:00");
     }
 
     @Test

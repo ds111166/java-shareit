@@ -31,10 +31,7 @@ import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -53,7 +50,6 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
     private final BookingMapper bookingMapper;
-    private final Validator validator;
 
     @Override
     @Transactional
@@ -130,16 +126,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public List<ItemResponseDto> searchItemsByText(String text, @Min(0) Integer from, @Min(1) Integer size) {
-
-        Set<ConstraintViolation<Object>> violations = validator.validate(from);
-
-        if (!violations.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (ConstraintViolation<Object> constraintViolation : violations) {
-                sb.append(constraintViolation.getMessage());
-            }
-            throw new ConstraintViolationException("Error occurred: " + sb, violations);
-        }
         if (text == null || text.isEmpty() || text.isBlank() || size == 0) {
             return new ArrayList<>();
         }
