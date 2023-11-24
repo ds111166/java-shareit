@@ -17,16 +17,16 @@ import javax.persistence.*;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                 // уникальный идентификатор вещи
+    private Long id;                // уникальный идентификатор вещи
     @Column(nullable = false)
-    private String name;             // краткое название
+    private String name;            // краткое название
     @Column(nullable = false, length = 1024)
-    private String description;      // развёрнутое описание
+    private String description;     // развёрнутое описание
     @Column(name = "is_available", nullable = false)
-    private Boolean available;       // доступна или нет вещь для аренды
+    private Boolean available;      // доступна или нет вещь для аренды
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;              // владелец вещи
+    private User owner;             // владелец вещи
     @Column(name = "request_id")
-    private Long itemRequestId;     //  если вещь была создана по запросу - ссылка на соответствующий запрос
+    private Long requestId;     //  если вещь была создана по запросу - ссылка на соответствующий запрос
 }

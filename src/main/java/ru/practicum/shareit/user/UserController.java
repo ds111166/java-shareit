@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UseRequestDto;
+import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.validation.Marker;
@@ -46,7 +46,7 @@ public class UserController {
     @PostMapping
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDto createUser(@Valid @RequestBody UseRequestDto newUser) {
+    public UserResponseDto createUser(@Valid @RequestBody UserRequestDto newUser) {
 
         log.info("Запрос на создание: \"{}\"", newUser);
         final UserResponseDto user = userService.createUser(newUser);
