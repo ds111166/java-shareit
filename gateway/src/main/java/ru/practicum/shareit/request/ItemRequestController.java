@@ -2,18 +2,15 @@ package ru.practicum.shareit.request;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
-import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
-import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Slf4j
 @Validated
@@ -21,57 +18,40 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
-    private final ItemRequestService itemRequestService;
+    private final ItemRequestClient itemRequestClient;
 
     @PostMapping
     @Validated({Marker.OnCreate.class})
-    @ResponseStatus(HttpStatus.CREATED)
-    public ItemRequestResponseDto createItemRequest(@RequestHeader("X-Sharer-User-Id") Long requestorId,
-                                                    @Valid @RequestBody ItemRequestCreateDto newItemRequest) {
-        log.info("Получен запрос, содержащий описание требуемой вещи: \"{}\" от пользователя с id: {}",
-                newItemRequest, requestorId);
-        ItemRequestResponseDto createdItemRequest = itemRequestService.createItemRequest(requestorId, newItemRequest);
-        log.info("Добавлен: {}", createdItemRequest);
-
-        return createdItemRequest;
+    public ResponseEntity<Object> createItemRequest(
+            @RequestHeader("X-Sharer-User-Id") Long requestorId,
+            @Valid @RequestBody ItemRequestCreateDto newItemRequest) {
+        log.info("Create item request {}, requestorId={}", newItemRequest, requestorId);
+        return itemRequestClient.createItemRequest(requestorId, newItemRequest);
     }
 
     @GetMapping("/{requestId}")
-    @ResponseStatus(HttpStatus.OK)
-    public ItemRequestResponseDto getItemRequestById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                     @PathVariable @NotNull Long requestId) {
-        log.info("Запрос на получение запроса вещи с id: {} от пользователя с id: {}", requestId, userId);
-        ItemRequestResponseDto itemRequestById = itemRequestService.getItemRequestById(userId, requestId);
-        log.info("Отправлен: {}", itemRequestById);
-        return itemRequestById;
+    public ResponseEntity<Object> getItemRequestById(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @PathVariable @NotNull Long requestId) {
+        log.info("Get itemRequest by id={}, userId={}", requestId, userId);
+        return itemRequestClient.getItemRequestById(userId, requestId);
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<ItemRequestResponseDto> getItemRequests(@RequestHeader("X-Sharer-User-Id") Long requestorId) {
-        log.info("Запрос на получение запросов вещей от пользователя с id: {}", requestorId);
-        List<ItemRequestResponseDto> itemRequests = itemRequestService.getItemRequests(requestorId);
-        log.info("\"Количество найденных запросов вещей от пользователя с id: {} равно: {}\"",
-                requestorId, itemRequests.size());
-        return itemRequests;
+    public ResponseEntity<Object> getItemRequests(@RequestHeader("X-Sharer-User-Id") Long requestorId) {
+        log.info("Get itemRequest by requestor id={}", requestorId);
+        return itemRequestClient.getItemRequests(requestorId);
     }
 
     @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ItemRequestResponseDto> getItemRequestsAll(
+    public ResponseEntity<Object> getItemRequestsAll(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
             @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
-        log.info("Запрос от пользователя с id: {} на получение запросов вещей от других пользователей,\n " +
-                        "по странично, начиная с позиции: {}, величина страницы: {} ",
-                userId, from, (size == null) ? "\"не определена\"" : size);
-        List<ItemRequestResponseDto> itemRequests = itemRequestService.getItemRequestsAll(userId,
-                from, (size == null) ? Integer.MAX_VALUE : size);
-        log.info("\"Количество найденных запросов вещей от пользователей равно: {}\"",
-                itemRequests.size());
-        return itemRequests;
+        log.info("Get itemRequests all userId={}, from={}, size={}", userId, from, size);
+        return itemRequestClient.getItemRequestsAll(userId, from, (size == null) ? Integer.MAX_VALUE : size);
     }
 
 }

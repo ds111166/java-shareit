@@ -2,17 +2,15 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
-import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Slf4j
 @Validated
@@ -21,58 +19,39 @@ import java.util.List;
 @RequestMapping(path = "/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserClient userClient;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<UserResponseDto> getUsers() {
-
-        log.info("Запрос на получение списка всех пользователей");
-        final List<UserResponseDto> users = userService.getUsers();
-        log.info("Количество всех пользователей равно: {}", users.size());
-        return users;
+    public ResponseEntity<Object> getUsers() {
+        log.info("Get users");
+        return userClient.getUsers();
     }
 
     @GetMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto getUserById(@PathVariable @NotNull Long userId) {
-
-        log.info("Запрос на получение пользователя с id: {}", userId);
-        final UserResponseDto userById = userService.getUserById(userId);
-        log.info("Отправлен: \"{}\"", userById);
-        return userById;
+    public ResponseEntity<Object> getUserById(@PathVariable @NotNull Long userId) {
+        log.info("Get users by userId={}", userId);
+        return userClient.getUserById(userId);
     }
 
     @PostMapping
     @Validated({Marker.OnCreate.class})
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDto createUser(@Valid @RequestBody UserRequestDto newUser) {
-
-        log.info("Запрос на создание: \"{}\"", newUser);
-        final UserResponseDto user = userService.createUser(newUser);
-        log.info("Создан: \"{}\"", user);
-        return user;
+    public ResponseEntity<Object> createUser(@Valid @RequestBody UserRequestDto newUser) {
+        log.info("Create user {}", newUser);
+        return userClient.createUser(newUser);
     }
 
     @PatchMapping("/{userId}")
     @Validated({Marker.OnUpdate.class})
-    @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto updateUser(@PathVariable @NotNull Long userId,
-                                      @Valid @RequestBody UserResponseDto updatedUser) {
-
-        log.info("Запрос на обновление: \"{}\"", updatedUser);
-        final UserResponseDto user = userService.updateUser(userId, updatedUser);
-        log.info("Обновлён: \"{}\"", user);
-        return user;
+    public ResponseEntity<Object> updateUser(@PathVariable @NotNull Long userId,
+                                             @Valid @RequestBody UserResponseDto updatedUser) {
+        log.info("Update user {}, userId={}", updatedUser, userId);
+        return userClient.updateUser(userId, updatedUser);
     }
 
     @DeleteMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
     public void deleteUser(@PathVariable @NotNull Long userId) {
-
-        log.info("Запрос на удаление пользователя с id: {}", userId);
-        userService.deleteUser(userId);
-        log.info("Пользователь с id: {} удален", userId);
+        log.info("Delete user, userId={}", userId);
+        userClient.deleteUser(userId);
     }
 
 }

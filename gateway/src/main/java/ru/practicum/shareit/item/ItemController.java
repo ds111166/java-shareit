@@ -3,19 +3,17 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentRequestDto;
-import ru.practicum.shareit.comment.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
-import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Slf4j
 @Validated
@@ -24,95 +22,66 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
 
-    private final ItemService itemService;
+    private final ItemClient itemClient;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<ItemResponseDto> getOwnerItems(
+    public ResponseEntity<Object> getOwnerItems(
             @RequestHeader("X-Sharer-User-Id") Long ownerId,
             @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
             @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
-
-        log.info("Запрос на получение списка вещей владельца с id: {}." +
-                " Индекс первого элемента: {}." +
-                " Количество элементов для отображения: {}", ownerId, from, size);
-        final List<ItemResponseDto> items = itemService.getOwnerItems(ownerId, from,
-                (size == null) ? Integer.MAX_VALUE : size);
-        log.info("Количество найденных вещей владельца с id: {} равно: {}", ownerId, items.size());
-        return items;
+        log.info("Get items by owner id={}, from={}, size={}", ownerId, from, size);
+        return itemClient.getOwnerItems(ownerId, from, (size == null) ? Integer.MAX_VALUE : size);
     }
 
     @GetMapping("/{itemId}")
-    @ResponseStatus(HttpStatus.OK)
-    public ItemResponseDto getItemById(
+    public ResponseEntity<Object> getItemById(
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @PathVariable @NotNull Long itemId) {
-
-        log.info("Запрос на получение вещи с id: {} от пользователя с id: {}", itemId, userId);
-        final ItemResponseDto itemById = itemService.getItemById(userId, itemId);
-        log.info("Отправлена: {}", itemById);
-        return itemById;
+        log.info("Get item by id={}, userId={}", itemId, userId);
+        return itemClient.getItemById(userId, itemId);
     }
 
     @PostMapping
     @Validated({Marker.OnCreate.class})
-    @ResponseStatus(HttpStatus.CREATED)
-    public ItemResponseDto createItem(
+    public ResponseEntity<Object> createItem(
             @RequestHeader("X-Sharer-User-Id") Long ownerId,
             @Valid @RequestBody ItemCreateDto newItem) {
-
-        log.info("Запрос на добавление: {} владельцем с id: {}", newItem, ownerId);
-        final ItemResponseDto createdItem = itemService.createItem(ownerId, newItem);
-        log.info("Добавлена: {}", createdItem);
-        return createdItem;
+        log.info("Creating item {}, userId={}", newItem, ownerId);
+        return itemClient.createItem(ownerId, newItem);
     }
 
     @PatchMapping("/{itemId}")
     @Validated({Marker.OnUpdate.class})
-    @ResponseStatus(HttpStatus.OK)
-    public ItemResponseDto updateItem(
+    public ResponseEntity<Object> updateItem(
             @RequestHeader("X-Sharer-User-Id") Long ownerId,
             @PathVariable @NotNull Long itemId,
             @Valid @RequestBody ItemResponseDto itemData) {
-
-        log.info("Запрос на обновление: {}, id вещи: {}, id владельца: {}", itemData, itemId, ownerId);
-        final ItemResponseDto updatedItem = itemService.updateItem(ownerId, itemId, itemData);
-        log.info("Обновлена: {}", updatedItem);
-        return updatedItem;
+        log.info("Update item {}, itemId={}, ownerId={}", itemData, itemId, ownerId);
+        return itemClient.updateItem(itemData, itemId, ownerId);
     }
 
     @GetMapping("/search")
-    @ResponseStatus(HttpStatus.OK)
     @Validated
-    public List<ItemResponseDto> searchItemsByText(
+    public ResponseEntity<Object> searchItemsByText(
             @RequestParam("text") String text,
             @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
             @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
-
-        log.info("Запрос поиска вещей по описанию: \"{}\". Индекс первого элемента: {}." +
-                "Количество элементов для отображения: {}", text, from, size);
-        final List<ItemResponseDto> items = itemService.searchItemsByText(text, from,
-                (size == null) ? Integer.MAX_VALUE : size);
-        log.info("Количество найденных вещей равно: {}", items.size());
-        return items;
+        log.info("Search items by text \"{}\", from={}, size={}", text, from, size);
+        return itemClient.searchItemsByText(text, from, (size == null) ? Integer.MAX_VALUE : size);
     }
 
     @PostMapping("/{itemId}/comment")
     @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.OK)
-    public CommentResponseDto createComment(
+    public ResponseEntity<Object> createComment(
             @RequestHeader("X-Sharer-User-Id") Long authorId,
             @PathVariable @NotNull Long itemId,
             @Valid @RequestBody CommentRequestDto newComment) {
-
-        log.info("Запрос на добавление комментария: \"{}\" для вещи с id: {}, пользователем с id: {}",
-                newComment, itemId, authorId);
-        final CommentResponseDto createdComment = itemService.createComment(authorId, itemId, newComment);
-        log.info("Добавлен: {}", createdComment);
-        return createdComment;
+        log.info("Create comment {}, authorId={}, itemId={}", newComment, authorId, itemId);
+        return itemClient.createComment(authorId, itemId, newComment);
     }
 }
