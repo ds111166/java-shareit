@@ -47,7 +47,7 @@ public class BookingClient extends BaseClient {
 
     public ResponseEntity<Object> approvalBooking(Long ownerItemId, Long bookingId, Boolean approved) {
         String path = "/" + bookingId + "?approved=" + approved;
-        return post(path, ownerItemId, null);
+        return patch(path, ownerItemId, null);
     }
 
     public ResponseEntity<Object> getBookingsByOwnerItemId(
