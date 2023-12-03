@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.it.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemCreateDto {
+public class ItCreateDto {
     @NotBlank(groups = Marker.OnCreate.class, message = "Наименование вещи не может быть пустым")
     private String name;        // краткое название
     @NotBlank(groups = Marker.OnCreate.class, message = "Описание вещи не может быть пустым")

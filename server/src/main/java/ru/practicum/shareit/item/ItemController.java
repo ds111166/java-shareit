@@ -21,7 +21,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/items")
+@RequestMapping(path = "/items")
 public class ItemController {
 
     private final ItemService itemService;

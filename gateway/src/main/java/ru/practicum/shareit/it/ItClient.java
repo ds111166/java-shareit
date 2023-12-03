@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.it;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,17 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.comment.dto.CommentRequestDto;
-import ru.practicum.shareit.item.dto.ItemCreateDto;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
-
-import java.util.Map;
+import ru.practicum.shareit.it.dto.ItCreateDto;
+import ru.practicum.shareit.it.dto.ItResponseDto;
 
 @Service
-public class ItemClient extends BaseClient {
+public class ItClient extends BaseClient {
     private static final String API_PREFIX = "/items";
 
     @Autowired
-    public ItemClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public ItClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
@@ -29,11 +27,20 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getOwnerItems(Long userId, Integer from, Integer size) {
+
+        String path = "?from=" + from;
+        if (size != null) {
+            path += "&size=" + size;
+        }
+        return get(path, userId, null);
+        /*
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
         );
         return get("?from={from}&size={size}", userId, parameters);
+
+         */
     }
 
     public ResponseEntity<Object> getItemById(Long userId, Long itemId) {
@@ -41,11 +48,11 @@ public class ItemClient extends BaseClient {
         return get(path, userId);
     }
 
-    public ResponseEntity<Object> createItem(Long userId, ItemCreateDto newItem) {
+    public ResponseEntity<Object> createItem(Long userId, ItCreateDto newItem) {
         return post("", userId, newItem);
     }
 
-    public ResponseEntity<Object> updateItem(ItemResponseDto itemData, Long itemId, Long userId) {
+    public ResponseEntity<Object> updateItem(ItResponseDto itemData, Long itemId, Long userId) {
         return patch("/" + itemId, userId, itemData);
     }
 

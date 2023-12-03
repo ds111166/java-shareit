@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Slf4j
 @Validated
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
@@ -51,7 +52,7 @@ public class ItemRequestController {
             @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
         log.info("Get itemRequests all userId={}, from={}, size={}", userId, from, size);
-        return itemRequestClient.getItemRequestsAll(userId, from, (size == null) ? Integer.MAX_VALUE : size);
+        return itemRequestClient.getItemRequestsAll(userId, from, size);
     }
 
 }

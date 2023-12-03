@@ -43,6 +43,6 @@ public class ItemRequestClient extends BaseClient {
         if (size != null) {
             path += "&size=" + size;
         }
-        return get(path);
+        return get(path, userId);
     }
 }

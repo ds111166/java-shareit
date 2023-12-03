@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.it.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class ItemResponseDto {
+public class ItResponseDto {
     private Long id;                 // уникальный идентификатор вещи
     private String name;             // краткое название
     private String description;      // развёрнутое описание

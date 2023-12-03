@@ -65,7 +65,7 @@ public class BookingController {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new ValidationException("Unknown state: " + stateParam));
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, bookerId, from, size);
-        return bookingClient.getBookings(bookerId, state, from, (size == null) ? Integer.MAX_VALUE : size);
+        return bookingClient.getBookings(bookerId, state, from, size);
     }
 
     @GetMapping("/owner")
@@ -81,6 +81,6 @@ public class BookingController {
                 .orElseThrow(() -> new ValidationException("Unknown state: " + stateParam));
         log.info("Get booking by owner id={} with state {}, from={}, size={}", ownerItemId, state, from, size);
         return bookingClient.getBookingsByOwnerItemId(ownerItemId,
-                state, from, (size == null) ? Integer.MAX_VALUE : size);
+                state, from, size);
     }
 }
