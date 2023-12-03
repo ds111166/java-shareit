@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.comment.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -41,6 +43,8 @@ public class ItemController {
         final List<ItemResponseDto> items = itemService.getOwnerItems(ownerId, from,
                 (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество найденных вещей владельца с id: {} равно: {}", ownerId, items.size());
+        log.info("Идентификаторы вещей: \"{}\"",
+                items.stream().map(ItemResponseDto::getId).collect(Collectors.toList()));
         return items;
     }
 
@@ -98,6 +102,8 @@ public class ItemController {
         final List<ItemResponseDto> items = itemService.searchItemsByText(text, from,
                 (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество найденных вещей равно: {}", items.size());
+        log.info("Идентификаторы вещей: \"{}\"",
+                items.stream().map(ItemResponseDto::getId).collect(Collectors.toList()));
         return items;
     }
 

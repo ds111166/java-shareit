@@ -42,7 +42,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest itemRequest = itemRequestMapper.toItemRequest(newItemRequest, requestor);
         ItemRequest createdItemRequest = itemRequestRepository.save(itemRequest);
         final UserResponseDto userDto = userMapper.toUserDto(createdItemRequest.getRequestor());
-        List<ItemResponseDto> itemsDto = itemService.findByItemRequestId(requestorId);//
+        List<ItemResponseDto> itemsDto = itemService.findByItemRequestId(requestorId);
         return itemRequestMapper.toItemRequestResponseDto(createdItemRequest, userDto, itemsDto);
     }
 

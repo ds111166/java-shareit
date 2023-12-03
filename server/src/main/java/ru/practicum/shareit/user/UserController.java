@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.service.UserService;
@@ -13,6 +14,7 @@ import ru.practicum.shareit.validation.Marker;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -30,6 +32,8 @@ public class UserController {
         log.info("Запрос на получение списка всех пользователей");
         final List<UserResponseDto> users = userService.getUsers();
         log.info("Количество всех пользователей равно: {}", users.size());
+        log.info("Идентификаторы пользователей: \"{}\"",
+                users.stream().map(UserResponseDto::getId).collect(Collectors.toList()));
         return users;
     }
 

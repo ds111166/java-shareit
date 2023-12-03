@@ -35,15 +35,6 @@ public class BookingClient extends BaseClient {
             path += "&size=" + size;
         }
         return get(path, userId, null);
-
-        /*Map<String, Object> parameters = Map.of(
-                "state", state.name(),
-                "from", from,
-                "size", size
-        );
-        return get("?state={state}&from={from}&size={size}", userId, parameters);
-
-         */
     }
 
     public ResponseEntity<Object> getBookingById(long userId, Long bookingId) {

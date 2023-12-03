@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -82,6 +83,8 @@ public class BookingController {
                 (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество бронирований в состоянии: \"{}\" пользователя с id: {} равно: {}",
                 state, bookerId, bookings.size());
+        log.info("Идентификаторы бронирований: \"{}\"",
+                bookings.stream().map(BookingDto::getId).collect(Collectors.toList()));
         return bookings;
     }
 
@@ -102,6 +105,8 @@ public class BookingController {
                 (size == null) ? Integer.MAX_VALUE : size);
         log.info("Количество бронирований в состоянии: \"{}\" вещей владельца с id: {} равно: {}",
                 state, ownerItemId, bookings.size());
+        log.info("Идентификаторы бронирований: \"{}\"",
+                bookings.stream().map(BookingDto::getId).collect(Collectors.toList()));
         return bookings;
     }
 }

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Validated
@@ -53,6 +55,8 @@ public class ItemRequestController {
         List<ItemRequestResponseDto> itemRequests = itemRequestService.getItemRequests(requestorId);
         log.info("\"Количество найденных запросов вещей от пользователя с id: {} равно: {}\"",
                 requestorId, itemRequests.size());
+        log.info("Идентификаторы запросов вещей: \"{}\"",
+                itemRequests.stream().map(ItemRequestResponseDto::getId).collect(Collectors.toList()));
         return itemRequests;
     }
 
@@ -71,6 +75,8 @@ public class ItemRequestController {
                 from, (size == null) ? Integer.MAX_VALUE : size);
         log.info("\"Количество найденных запросов вещей от пользователей равно: {}\"",
                 itemRequests.size());
+        log.info("Идентификаторы запросов вещей: \"{}\"",
+                itemRequests.stream().map(ItemRequestResponseDto::getId).collect(Collectors.toList()));
         return itemRequests;
     }
 
