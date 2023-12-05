@@ -19,7 +19,6 @@ import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,7 +72,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     @Transactional
-    public List<ItemRequestResponseDto> getItemRequestsAll(Long userId, @Min(0) Integer from, @Min(1) Integer size) {
+    public List<ItemRequestResponseDto> getItemRequestsAll(Long userId, Integer from, Integer size) {
         userService.getUserById(userId);
         if (size == 0) {
             return new ArrayList<>();

@@ -32,7 +32,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.ValidationException;
-import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemResponseDto> getOwnerItems(Long ownerId, @Min(0) Integer from, @Min(1) Integer size) {
+    public List<ItemResponseDto> getOwnerItems(Long ownerId, Integer from, Integer size) {
         userService.getUserById(ownerId);
         if (size == 0) {
             return new ArrayList<>();
@@ -125,7 +124,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public List<ItemResponseDto> searchItemsByText(String text, @Min(0) Integer from, @Min(1) Integer size) {
+    public List<ItemResponseDto> searchItemsByText(String text, Integer from, Integer size) {
         if (text == null || text.isEmpty() || text.isBlank() || size == 0) {
             return new ArrayList<>();
         }

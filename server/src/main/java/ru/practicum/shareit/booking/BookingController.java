@@ -3,21 +3,15 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.validation.Marker;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
@@ -26,11 +20,10 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    @Validated({Marker.OnCreate.class})
     @ResponseStatus(HttpStatus.CREATED)
     public BookingDto createBooking(
             @RequestHeader("X-Sharer-User-Id") Long bookerId,
-            @Valid @RequestBody BookingRequestDto newBookingRequestDto) {
+            @RequestBody BookingRequestDto newBookingRequestDto) {
 
         log.info("Запрос на создание: \"{}\" от пользователя с id: {}", newBookingRequestDto, bookerId);
         final BookingDto booking = bookingService.createBooking(bookerId, newBookingRequestDto);
@@ -39,12 +32,11 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    @Validated({Marker.OnUpdate.class})
     @ResponseStatus(HttpStatus.OK)
     public BookingDto approvalBooking(
             @RequestHeader("X-Sharer-User-Id") Long ownerItemId,
-            @PathVariable @NotNull Long bookingId,
-            @RequestParam(value = "approved") @NotNull Boolean approved) {
+            @PathVariable Long bookingId,
+            @RequestParam(value = "approved") Boolean approved) {
 
         log.info("Обработка запроса на бронирование с id: {}, владелец вещи id: {}, подтверждение: {}",
                 bookingId, ownerItemId, approved);
@@ -58,7 +50,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.OK)
     public BookingDto getBookingById(
             @RequestHeader("X-Sharer-User-Id") Long userId,
-            @PathVariable @NotNull Long bookingId) {
+            @PathVariable Long bookingId) {
 
         log.info("Запрос на получение информации о бронировании с id: {} от пользователя с id: {}", bookingId, userId);
         final BookingDto booking = bookingService.getBookingById(userId, bookingId);
@@ -71,9 +63,7 @@ public class BookingController {
     public List<BookingDto> getBookings(
             @RequestHeader("X-Sharer-User-Id") Long bookerId,
             @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
-            @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
             @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
 
         log.info("Запрос на получение списка бронирований в состоянии: \"{}\" пользователя с id: {}\n" +
@@ -93,9 +83,7 @@ public class BookingController {
     public List<BookingDto> getBookingsByOwnerItemId(
             @RequestHeader("X-Sharer-User-Id") Long ownerItemId,
             @RequestParam(value = "state", defaultValue = "ALL", required = false) String state,
-            @Min(value = 0, message = "Индекс первого элемента не должен быть меньше нуля!")
             @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Min(value = 1, message = "Количество элементов для отображения не должно быть меньше единицы!")
             @RequestParam(value = "size", required = false) Integer size) {
 
         log.info("Запрос на получение списка бронирований в состоянии: \"{}\" вещей владельца с id: {}\n" +

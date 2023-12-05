@@ -24,7 +24,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.ValidationException;
-import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -117,7 +116,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public List<BookingDto> getBookings(Long bookerId, String state, @Min(0) Integer from, @Min(1) Integer size) {
+    public List<BookingDto> getBookings(Long bookerId, String state, Integer from, Integer size) {
         userService.getUserById(bookerId);
 
         List<Booking> bookings;
@@ -159,7 +158,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public List<BookingDto> getBookingsByOwnerItemId(Long ownerItemId, String state,
-                                                     @Min(0) Integer from, @Min(1) Integer size) {
+                                                     Integer from, Integer size) {
         userService.getUserById(ownerItemId);
         List<Booking> bookings;
         final Sort sorting = Sort.by(Sort.Order.desc("start"));
